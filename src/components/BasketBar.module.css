@@ -4,8 +4,7 @@
   align-items: flex-start;
   gap: 8px;
   padding: 10px 16px;
-  background: var(--bg-elev);
-  border-bottom: 1px solid var(--surface-border);
+  background: transparent;
 }
 
 .chip {
