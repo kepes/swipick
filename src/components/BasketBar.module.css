@@ -1,0 +1,42 @@
+.bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 10px 16px;
+  background: var(--bg-elev);
+  border-bottom: 1px solid var(--surface-border);
+}
+
+.chip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px 4px 6px;
+  background: var(--bg-card);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--radius-sm);
+  font-size: 0.85rem;
+}
+
+.chip.delete {
+  border-color: var(--danger);
+  background: var(--danger-dim);
+}
+
+.thumb {
+  width: 28px;
+  height: 28px;
+  object-fit: cover;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+.label {
+  color: var(--text);
+  font-weight: 500;
+}
+
+.count {
+  color: var(--text-dim);
+  font-variant-numeric: tabular-nums;
+}

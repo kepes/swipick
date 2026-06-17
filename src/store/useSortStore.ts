@@ -58,6 +58,8 @@ interface StoreState extends SortState {
   isSorting: boolean
   sortProgress: SortProgress | null
   sortResult: MoveResult | null
+  /** UI-jel: minden Space-lenyomáskor nő — a CardStack erre togglel videót. */
+  videoToggleNonce: number
 
   pickFolder: (gateway: FileSystemGateway) => Promise<void>
   applyKeyEvent: (e: KeyEvent) => KeyAction
@@ -66,6 +68,7 @@ interface StoreState extends SortState {
   runOrganize: () => Promise<void>
   reset: () => void
   backToPicker: () => void
+  toggleVideo: () => void
 }
 
 const emptyDomain: SortState = {
@@ -104,6 +107,7 @@ export const useSortStore = create<StoreState>((set, get) => {
     isSorting: false,
     sortProgress: null,
     sortResult: null,
+    videoToggleNonce: 0,
 
     async pickFolder(gateway) {
       set({ pickerError: null, restoredNotice: null })
@@ -212,6 +216,10 @@ export const useSortStore = create<StoreState>((set, get) => {
         sortProgress: null,
         sortResult: null,
       })
+    },
+
+    toggleVideo() {
+      set((s) => ({ videoToggleNonce: s.videoToggleNonce + 1 }))
     },
   }
 })
