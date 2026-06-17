@@ -61,6 +61,7 @@ export interface KeyEvent {
   ctrlKey: boolean
   shiftKey: boolean
   metaKey: boolean
+  altKey: boolean
 }
 
 /** A classifyKey kimenete — diszkriminált unió. */

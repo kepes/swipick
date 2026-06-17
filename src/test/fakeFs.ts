@@ -49,10 +49,12 @@ export class FakeFileHandle {
   private async _move(destDir: FakeDirectoryHandle, newName?: string): Promise<void> {
     const target = newName ?? this.name
     const oldName = this.name
+    const oldParent = this.parent
     this.name = target
+    // FONTOS: előbb detach a régi szülőből, CSAK utána adopt — különben az
+    // _adopt által beállított új parent miatt a detach-feltétel sosem teljesülne.
+    if (oldParent && oldParent !== destDir) oldParent._detach(oldName)
     destDir._adopt(this)
-    if (this.parent && this.parent !== destDir) this.parent._detach(oldName)
-    this.parent = destDir
   }
 }
 
