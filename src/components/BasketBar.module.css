@@ -1,6 +1,7 @@
 .bar {
   display: flex;
   flex-wrap: wrap;
+  align-items: flex-start;
   gap: 8px;
   padding: 10px 16px;
   background: var(--bg-elev);
@@ -24,11 +25,13 @@
 }
 
 .thumb {
-  width: 28px;
-  height: 28px;
+  /* A width/height inline motion-style-ból jön (dock-nagyítás); itt csak fallback. */
+  width: 56px;
+  height: 56px;
   object-fit: cover;
   border-radius: 4px;
   flex-shrink: 0;
+  transform-origin: top center;
 }
 
 .label {

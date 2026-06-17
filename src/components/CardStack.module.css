@@ -9,6 +9,35 @@
 
 .cardWrapper {
   position: absolute;
-  width: min(640px, 90vw);
-  height: min(480px, 65vh);
+  width: 100%;
+  height: 100%;
+}
+
+/* Következő két elem előnézete a bal alsó sarokban. */
+.nextUp {
+  position: absolute;
+  left: 16px;
+  bottom: 16px;
+  z-index: 2;
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+  pointer-events: none;
+}
+
+.nextThumb {
+  height: 20vh;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  border: 1px solid var(--surface-border);
+  background: var(--bg-card);
+  box-shadow: var(--shadow);
+}
+
+.nextThumb img,
+.nextThumb video {
+  height: 100%;
+  width: auto;
+  display: block;
+  object-fit: cover;
 }

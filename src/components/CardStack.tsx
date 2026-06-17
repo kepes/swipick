@@ -4,16 +4,49 @@ import { useSortStore } from '../store/useSortStore'
 import { useMediaWindow } from '../hooks/useMediaWindow'
 import { MediaCard } from './MediaCard'
 import { DoneScreen } from './DoneScreen'
-import { DELETE_BUCKET } from '../domain/types'
+import { DELETE_BUCKET, type MediaItem } from '../domain/types'
 import styles from './CardStack.module.css'
 
-function exitVariants(direction: 'right' | 'left' | 'up') {
-  const map = {
-    right: { x: 400, opacity: 0, rotate: 15 },
-    left: { x: -400, opacity: 0, rotate: -15 },
-    up: { y: -400, opacity: 0 },
-  }
-  return map[direction]
+// Bal alsó sarokban a következő két, sorra kerülő elem előnézete (20vh magas).
+function NextUpPreview({
+  upcoming,
+  urlFor,
+}: {
+  upcoming: MediaItem[]
+  urlFor: (fileName: string) => string | undefined
+}) {
+  if (upcoming.length === 0) return null
+  return (
+    <div className={styles.nextUp} aria-hidden="true">
+      {upcoming.map((item) => {
+        const url = urlFor(item.fileName)
+        return (
+          <div key={item.fileName} className={styles.nextThumb}>
+            {item.kind === 'image' ? (
+              <img src={url} alt="" />
+            ) : (
+              <video src={url} muted playsInline preload="metadata" />
+            )}
+          </div>
+        )
+      })}
+    </div>
+  )
+}
+
+const cardVariants = {
+  initial: { opacity: 0, scale: 0.96 },
+  animate: { opacity: 1, scale: 1, x: 0, y: 0, rotate: 0 },
+  // Függvény-variant: az AnimatePresence `custom`-ja oldja fel kilépéskor a FRISS
+  // iránnyal (label-alapú exit → a kilépő kártya a legutóbbi döntés irányát kapja).
+  exit: (direction: 'right' | 'left' | 'up') => {
+    const map = {
+      right: { x: 400, opacity: 0, rotate: 15 },
+      left: { x: -400, opacity: 0, rotate: -15 },
+      up: { y: -400, opacity: 0 },
+    }
+    return map[direction]
+  },
 }
 
 export function CardStack() {
@@ -52,16 +85,20 @@ export function CardStack() {
   }
 
   const currentItem = items[position]
+  // A következő kép a JOBB oldalon (a kártyához közelebb), az azt követő balra.
+  const upcoming = items.slice(position + 1, position + 3).reverse()
 
   return (
     <div className={styles.container}>
-      <AnimatePresence mode="wait">
+      <AnimatePresence mode="wait" custom={exitDirectionRef.current}>
         <motion.div
           key={currentItem.fileName}
           className={styles.cardWrapper}
-          initial={{ opacity: 0, scale: 0.96 }}
-          animate={{ opacity: 1, scale: 1, x: 0, y: 0, rotate: 0 }}
-          exit={exitVariants(exitDirectionRef.current)}
+          custom={exitDirectionRef.current}
+          variants={cardVariants}
+          initial="initial"
+          animate="animate"
+          exit="exit"
           transition={{ duration: 0.25, ease: 'easeOut' }}
         >
           <MediaCard
@@ -72,6 +109,8 @@ export function CardStack() {
           />
         </motion.div>
       </AnimatePresence>
+
+      <NextUpPreview upcoming={upcoming} urlFor={urlFor} />
     </div>
   )
 }

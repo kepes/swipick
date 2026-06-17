@@ -20,7 +20,9 @@ A teljes folyamat a böngészőben, **szerver és adatbázis nélkül** zajlik a
 
 - **Tinder-nézet:** egyszerre egy elem nagyban, finom „eldobás"-animációval, haladásjelzővel (`37 / 240`).
 - **Kép és videó:** a videók némítva, ismétlődő (loop) előnézettel, automatikusan indulnak; `Space`-szel play/pause.
+- **Következő elemek előnézete:** a bal alsó sarokban a soron következő két médiaelem kicsiben (a következő jobbra, az azt követő balra); képnél és videónál egyaránt.
 - **Dinamikus kosarak:** bármelyik betű/szám billentyű kosarat hoz létre (max. 36 + „törlés").
+- **Nagyítható kosársor:** a kosarak bélyegképei a fejlécben nagyobban jelennek meg, és ha föléjük viszed az egeret, macOS dock-szerűen kinagyolódnak (a kurzorhoz legközelebbi a legnagyobb).
 - **Undo / Redo:** korlátlan lépés visszavonható és újra megismételhető.
 - **Folder-scoped munkamenet-mentés:** a döntéseid a böngésző `localStorage`-ába mentődnek, mappánként külön; legközelebb folytathatod onnan, ahol abbahagytad.
 - **Valódi rendezés:** a „Rendezés" gomb almappákba mozgatja a fájlokat ütközéskezeléssel.
@@ -38,11 +40,10 @@ npm install        # függőségek telepítése
 npm run dev        # fejlesztői szerver (Vite) → http://localhost:5173
 ```
 
-Éles build és helyi kipróbálás:
+Éles build helyi kipróbálása:
 
 ```bash
-npm run build      # típusellenőrzés + production build a dist/-be
-npm run preview    # a dist/ kiszolgálása localhost-ról (secure context)
+npm run preview    # automatikusan buildel, majd a dist/-et szolgálja ki localhost-ról (secure context)
 ```
 
 ## Használat
@@ -63,8 +64,8 @@ Ha ugyanazt a mappát választod, amelyhez van mentett munkamenet, a mappaválas
 | **Jobbra nyíl (→)** | A kép **marad a helyén** (nem kerül kosárba, a rendezéskor sem mozdul). |
 | **Balra nyíl (←)** | A kép a **„törlés"** kosárba kerül. |
 | **`Space`** | A fent lévő videó lejátszása / szüneteltetése. |
-| **`Ctrl+Z`** | Undo (visszavonás). |
-| **`Ctrl+Y`** vagy **`Ctrl+Shift+Z`** | Redo (újra). |
+| **`Ctrl+Z`** vagy **lefelé nyíl (↓)** | Undo (visszavonás). |
+| **`Ctrl+Y`**, **`Ctrl+Shift+Z`** vagy **felfelé nyíl (↑)** | Redo (újra). |
 | **`Esc`** | Az aktuális animáció megszakítása. |
 
 > Az érvénytelen fájlnév-karakterek (`/ \ : * ? < > |` stb.) és minden más billentyű **nem csinál semmit** — így sosem keletkezik érvénytelen nevű kosár. A **Rendezésnek nincs** billentyű-gyorsindítása (hogy véletlen lenyomás ne mozgasson fájlokat).
@@ -74,9 +75,10 @@ Ha ugyanazt a mappát választod, amelyhez van mentett munkamenet, a mappaválas
 A „Rendezés" gomb a kiválasztott mappán belül:
 
 - **Minden nem-„törlés" kosárhoz** létrehoz egy almappát a kosár nevével (`a/`, `1/`, …), és átmozgatja bele a képeit.
-- A **„törlés" kosár** képeit egy **`_torolt`** nevű almappába mozgatja (innen manuálisan törölheted — nem az OS kukájába kerül).
+- A **„törlés" kosár** képeit egy **`_torolt`** nevű almappába mozgatja (innen manuálisan törölheted — nem az OS kukájába kerül). A `_torolt` mappa több rendezésen át **egyetlen gyűjtőmappa** marad (újrahasználja).
 - A **jobbra nyíllal megtartott** és a **még be nem sorolt** képek **a helyükön maradnak**.
-- **Ütközéskezelés:** ha egy almappa már létezik, újrafelhasználja; ha egy fájlnév ütközik a célmappában, sorszámoz (`kep.jpg` → `kep (1).jpg`).
+- **Mappa-ütközés (sorszámozás):** ha egy kosár nevű almappa **már létezik**, a Rendezés nem írja felül és nem is olvasztja össze, hanem egy friss, **`_NN` sorszámozott testvért** hoz létre (`b/` foglalt → `b_01/`; ha `b/` és `b_01/` is van → `b_02/`). Így minden rendezés külön mappába kerül. (A `_torolt` kivétel — az mindig ugyanaz a mappa.)
+- **Fájlnév-ütközés:** ha egy fájlnév ütközik a célmappában, sorszámoz (`kep.jpg` → `kep (1).jpg`).
 - A mozgatás **biztonságos** (előbb másol/ír, csak utána törli az eredetit); egy fájl hibája nem állítja le a többit, a végén jelzi a sikertelenek számát.
 
 ## Munkamenet-mentés
@@ -92,9 +94,9 @@ A „Rendezés" gomb a kiválasztott mappán belül:
 
 | Script | Mit csinál |
 |---|---|
-| `npm run dev` | Vite fejlesztői szerver HMR-rel (`http://localhost:5173`). |
+| `npm run dev` | Előbb `tsc --noEmit` típusellenőrzés, majd Vite fejlesztői szerver HMR-rel (`http://localhost:5173`). Típushiba esetén a szerver el sem indul. |
 | `npm run build` | `tsc --noEmit` típusellenőrzés **és** production build a `dist/`-be (relatív útvonalakkal). |
-| `npm run preview` | A buildelt `dist/` kiszolgálása helyi szerverről (a File System Access API-hoz kellő secure context). |
+| `npm run preview` | Előbb lefuttatja a buildet (`vite build`), majd kiszolgálja a `dist/`-et helyi szerverről (a File System Access API-hoz kellő secure context) — nem kell külön emlékezni a buildre. |
 | `npm test` | A teljes Vitest teszt-suite egyszeri lefuttatása. |
 | `npm run test:watch` | Vitest watch módban. |
 | `npm run typecheck` | Csak típusellenőrzés (`tsc --noEmit`). |
