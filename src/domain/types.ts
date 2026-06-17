@@ -118,6 +118,8 @@ export interface FileSystemGateway {
 
 export interface ReadFolderResult {
   folderName: string
+  /** A kiválasztott mappa handle-je — a Rendezés (organize) ide ír. */
+  dirHandle: FileSystemDirectoryHandle
   /** lastModified ASC szerint rendezve. */
   items: MediaItem[]
   skippedCount: number

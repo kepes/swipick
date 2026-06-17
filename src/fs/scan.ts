@@ -66,5 +66,5 @@ export async function readFolder(gateway: FileSystemGateway): Promise<ReadFolder
   const sorted = sortItems(items)
   if (sorted.length === 0) throw { type: 'empty', folderName: dir.name }
 
-  return { folderName: dir.name, items: sorted, skippedCount }
+  return { folderName: dir.name, dirHandle: dir, items: sorted, skippedCount }
 }
