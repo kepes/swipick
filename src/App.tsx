@@ -11,6 +11,7 @@ import styles from './App.module.css'
 function SortingView() {
   const position = useSortStore((s) => s.position)
   const total = useSortStore((s) => s.items.length)
+  const currentFileName = useSortStore((s) => s.items[s.position]?.fileName)
   const restoredNotice = useSortStore((s) => s.restoredNotice)
   const isSorting = useSortStore((s) => s.isSorting)
   const progress = useSortStore((s) => s.sortProgress)
@@ -29,6 +30,9 @@ function SortingView() {
       </main>
 
       <footer className={styles.footer}>
+        {currentFileName && (
+          <div className={styles.fileName}>{currentFileName}</div>
+        )}
         <ControlButtons />
       </footer>
 
