@@ -107,7 +107,10 @@ Kattintáskor az app a kiválasztott mappán belül:
 - A **még be nem sorolt (sorrendben hátralévő) képek a helyükön maradnak** — ugyanúgy, mint a megtartottak. A Rendezés bármikor megnyomható, nem kötelező végigérni az összes képen.
 - A művelet végén az app visszajelzést ad (pl. „X kép áthelyezve, Y törölve").
 
-**Megjegyzés:** névütközés esetén (ha már létezik ilyen nevű almappa vagy fájl) az appnak ütközéskezeléssel kell rendelkeznie (pl. meglévő mappa újrafelhasználása, fájlnév-ütközésnél sorszámozás).
+**Megjegyzés — ütközéskezelés:**
+- **Mappa-ütközés:** ha egy nem-„törlés" kosár nevű almappa már létezik, az app **nem írja felül és nem olvasztja össze**, hanem friss, `_NN` kétjegyű sorszámú testvért hoz létre (`b/` foglalt → `b_01/`; `b/` és `b_01/` is van → `b_02/`). Így minden rendezés külön mappába kerül.
+- **Kivétel — `_torolt`:** a „törlés" kosár mappája nem sorszámozódik; több rendezésen át egyetlen gyűjtőmappa marad (újrahasználat).
+- **Fájlnév-ütközés:** ha egy fájlnév ütközik a célmappában, sorszámozás (`kep.jpg` → `kep (1).jpg`).
 
 ### 4.4 Újrakezdés / Reset
 - Eldobja az összes kosarat és minden eddigi műveletet (memóriából **és az aktuális mappa localStorage-ágából**). Más mappák mentett munkamenetét nem érinti.

@@ -50,11 +50,36 @@ describe('ensureBucketDir', () => {
     expect(root.childNames()).toContain(TRASH_DIR)
   })
 
-  it('meglévő bucket-mappát újrahasznál (nincs duplikátum)', async () => {
+  it('delete kosár: meglévő _torolt mappát újrahasznál (nincs sorszám)', async () => {
     const root = makeFakeDir('root', [])
     root.addSubdir(TRASH_DIR)
     await ensureBucketDir(asDir(root), DELETE_BUCKET)
     expect(root.childNames().filter((n) => n.startsWith(TRASH_DIR))).toEqual([TRASH_DIR])
+  })
+
+  it('normal kosár: létező mappa → friss _01 sorszámozott testvér, az eredeti érintetlen', async () => {
+    const root = makeFakeDir('root', [])
+    root.addSubdir('b')
+    const d = await ensureBucketDir(asDir(root), 'b')
+    expect((d as unknown as FakeDirectoryHandle).name).toBe('b_01')
+    expect(root.childNames().sort()).toEqual(['b', 'b_01'])
+  })
+
+  it('normal kosár: b és b_01 is létezik → b_02', async () => {
+    const root = makeFakeDir('root', [])
+    root.addSubdir('b')
+    root.addSubdir('b_01')
+    const d = await ensureBucketDir(asDir(root), 'b')
+    expect((d as unknown as FakeDirectoryHandle).name).toBe('b_02')
+    expect(root.childNames().sort()).toEqual(['b', 'b_01', 'b_02'])
+  })
+
+  it('normal kosár: sorszám kétjegyűre paddingol (b_09 után b_10)', async () => {
+    const root = makeFakeDir('root', [])
+    root.addSubdir('b')
+    for (let n = 1; n <= 9; n++) root.addSubdir(`b_0${n}`)
+    const d = await ensureBucketDir(asDir(root), 'b')
+    expect((d as unknown as FakeDirectoryHandle).name).toBe('b_10')
   })
 })
 
@@ -158,9 +183,14 @@ describe('runSort', () => {
         }
       },
     }
-    // ensureBucketDir-t megkerüljük: a root.getDirectoryHandle a badDest-et adja
-    vi.spyOn(root, 'getDirectoryHandle').mockResolvedValue(
-      badDest as unknown as FakeDirectoryHandle,
+    // ensureBucketDir-t megkerüljük: a root.getDirectoryHandle a badDest-et adja.
+    // Létezés-próbára (create nélkül) NotFoundError → a célmappa neve szabad ('a');
+    // create:true-ra a badDest jön, aminek a writable-je dob.
+    vi.spyOn(root, 'getDirectoryHandle').mockImplementation(
+      async (name: string, opts?: { create?: boolean }) => {
+        if (!opts?.create) throw new DOMException(`${name} not found`, 'NotFoundError')
+        return badDest as unknown as FakeDirectoryHandle
+      },
     )
 
     const plan: SortPlan = new Map([['a', [asFile(src)]]])

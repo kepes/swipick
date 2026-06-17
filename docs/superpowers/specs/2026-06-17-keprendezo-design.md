@@ -228,12 +228,13 @@ readFolder(gateway): Promise<ReadFolderResult>;             // dir.values() → 
 **Írás / Rendezés (`organize.ts`):**
 ```ts
 resolveCollisionName(destDir, name): Promise<string>;       // 'kep.jpg' → 'kep (1).jpg' → 'kep (2).jpg'
-ensureBucketDir(root, bucketKey): Promise<DirHandle>;       // getDirectoryHandle({create:true}), újrafelhasznál
+resolveBucketDirName(root, bucketKey): Promise<string>;     // 'b' szabad → 'b'; foglalt → 'b_01' → 'b_02' (kétjegyű)
+ensureBucketDir(root, bucketKey): Promise<DirHandle>;       // normal: szabad _NN sorszámú mappa; delete: _torolt újrahasznál
 moveFile(src, root, destDir, name): Promise<{finalName}>;   // ütközés-feloldás → write → delete (root kell a forrás removeEntry-hez)
 runSort(root, plan, onProgress?): Promise<MoveResult>;      // MoveResult = {moved, deleted, failed[]}
 ```
 - **moveFile sorrend: write → delete** (nem fordítva) — félbeszakadásnál a forrás sosem vész el. Natív gyors-út: ha `src.move` létezik, azt használja; különben `createWritable` + `getFile` blob-másolás + `root.removeEntry(src.name)`.
-- **ensureBucketDir:** normal kosár → `key` nevű mappa; `delete` kosár → **`_torolt`** mappa.
+- **ensureBucketDir:** normal kosár → `key` nevű mappa, de ha az **már létezik**, friss `_NN` kétjegyű sorszámú testvér (`b/` → `b_01/` → `b_02/`) — minden rendezés külön mappába; `delete` kosár → **`_torolt`** mappa, ez **újrahasznál** (egyetlen gyűjtőmappa, nem sorszámozódik).
 - **Ütközés:** ha a célnévre `getFileHandle` nem dob `NotFoundError`-t → foglalt → `base (n).ext` inkrementál (ext nélkül `name (n)`).
 - **Hibatűrő batch:** egy fájl bukása `failed[]`-be gyűlik, a futás megy tovább; a végén `"X áthelyezve, Y törölve[, Z sikertelen]"`.
 - A **megtartott (keep) és besorolatlan** képek nincsenek a `SortPlan`-ban → helyben maradnak.
@@ -272,7 +273,7 @@ A teljes lista a [plan](../plans/2026-06-17-keprendezo-plan.md) TDD-szekciójáb
 1. **Billentyű→kosár leképezés** a 6. szakasz igazságtáblája szerint (case-insensitive, a–z/0–9, érvénytelen → no-op, `position===len` → no-op).
 2. **Undo/redo lánc:** 3 besorolás → 2 undo → 1 redo → 1 új művelet → redo no-op; kosár utolsó elemének undo-ja → kosár eltűnik, redo újra létrehozza.
 3. **Folder-scoped localStorage** round-trip: döntés → reload → ugyanaz a mappa → kosarak+pozíció+history visszaáll; két különböző nevű mappa nem írja felül egymást; törölt fájl döntése `droppedFiles`-be esik, nincs crash.
-4. **Rendezés ütközéskezelés:** meglévő mappa újrafelhasználva (nincs `kep (1)/` mappa-duplikátum); fájlnév-ütközés → `name (n).ext`; `_torolt` mappa a delete-kosárnak; megtartott/besorolatlan kép a root-ban marad; write→delete sorrend.
+4. **Rendezés ütközéskezelés:** meglévő kosár-mappa → `_NN` sorszámú új testvér (`b/` → `b_01/`); `_torolt` viszont újrahasználva; fájlnév-ütközés → `name (n).ext`; megtartott/besorolatlan kép a root-ban marad; write→delete sorrend.
 5. **scan:** csak támogatott ext, almappa sosem `items`-ben, `lastModified` ASC tie-break név, üres mappa → `empty`.
 6. **Build:** `tsc --noEmit` 0 hiba, `vite build` zöld, `dist/` relatív úttal.
 

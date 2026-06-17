@@ -49,15 +49,46 @@ export async function resolveCollisionName(
   }
 }
 
+/** Igaz, ha a root-ban már létezik adott nevű almappa. */
+async function dirExists(root: FileSystemDirectoryHandle, name: string): Promise<boolean> {
+  try {
+    await root.getDirectoryHandle(name)
+    return true
+  } catch (e) {
+    if (isNotFound(e)) return false
+    throw e
+  }
+}
+
 /**
- * A kosárhoz tartozó célmappa (létrehozza, ha hiányzik; meglévőt újrahasznál).
- * delete kosár → TRASH_DIR; normal kosár → maga a bucketKey.
+ * Szabad mappanevet ad a normal kosárhoz. Ha a bucketKey nevű mappa szabad →
+ * bucketKey. Ha foglalt → 'bucketKey_01', '_02', … (kétjegyű, az első szabadig).
+ */
+export async function resolveBucketDirName(
+  root: FileSystemDirectoryHandle,
+  bucketKey: BucketKey,
+): Promise<string> {
+  if (!(await dirExists(root, bucketKey))) return bucketKey
+  for (let n = 1; ; n++) {
+    const candidate = `${bucketKey}_${String(n).padStart(2, '0')}`
+    if (!(await dirExists(root, candidate))) return candidate
+  }
+}
+
+/**
+ * A kosárhoz tartozó célmappa.
+ * delete kosár → TRASH_DIR (meglévőt újrahasznál, egyetlen gyűjtőmappa).
+ * normal kosár → bucketKey; ha az már létezik, friss _NN sorszámozott testvér
+ * (B → B_01 → B_02 …), így minden rendezés külön mappába kerül.
  */
 export async function ensureBucketDir(
   root: FileSystemDirectoryHandle,
   bucketKey: BucketKey,
 ): Promise<FileSystemDirectoryHandle> {
-  const dirName = bucketKey === DELETE_BUCKET ? TRASH_DIR : bucketKey
+  if (bucketKey === DELETE_BUCKET) {
+    return root.getDirectoryHandle(TRASH_DIR, { create: true })
+  }
+  const dirName = await resolveBucketDirName(root, bucketKey)
   return root.getDirectoryHandle(dirName, { create: true })
 }
 
