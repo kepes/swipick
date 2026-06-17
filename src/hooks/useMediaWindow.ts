@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import type { MediaItem } from '../domain/types'
 
 interface UseMediaWindowResult {
@@ -14,6 +14,9 @@ export function useMediaWindow(
   const behind = opts?.behind ?? 2
 
   const cacheRef = useRef<Map<string, string>>(new Map())
+  // A cache egy ref (revoke-bookkeeping miatt), de a ref-mutáció nem renderel újra.
+  // Ez a tick a URL-ek elkészülte után nő, hogy a kártya újrarendereljen a friss URL-lel.
+  const [, setTick] = useState(0)
 
   useEffect(() => {
     const cache = cacheRef.current
@@ -36,9 +39,16 @@ export function useMediaWindow(
         const file = await item.handle.getFile()
         const url = URL.createObjectURL(file)
         cache.set(item.fileName, url)
+        return true
       }
+      return false
     })
-    Promise.all(promises).catch(() => {})
+    Promise.all(promises)
+      .then((created) => {
+        // Csak akkor renderelünk újra, ha tényleg készült új URL.
+        if (created.some(Boolean)) setTick((t) => t + 1)
+      })
+      .catch(() => {})
   }, [items, position, ahead, behind])
 
   // Cleanup on unmount
