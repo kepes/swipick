@@ -229,7 +229,7 @@ readFolder(gateway): Promise<ReadFolderResult>;             // dir.values() → 
 ```ts
 resolveCollisionName(destDir, name): Promise<string>;       // 'kep.jpg' → 'kep (1).jpg' → 'kep (2).jpg'
 ensureBucketDir(root, bucketKey): Promise<DirHandle>;       // getDirectoryHandle({create:true}), újrafelhasznál
-moveFile(src, destDir, name): Promise<{finalName}>;         // ütközés-feloldás → write → delete
+moveFile(src, root, destDir, name): Promise<{finalName}>;   // ütközés-feloldás → write → delete (root kell a forrás removeEntry-hez)
 runSort(root, plan, onProgress?): Promise<MoveResult>;      // MoveResult = {moved, deleted, failed[]}
 ```
 - **moveFile sorrend: write → delete** (nem fordítva) — félbeszakadásnál a forrás sosem vész el. Natív gyors-út: ha `src.move` létezik, azt használja; különben `createWritable` + `getFile` blob-másolás + `root.removeEntry(src.name)`.

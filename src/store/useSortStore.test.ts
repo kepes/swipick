@@ -101,7 +101,7 @@ describe('useSortStore — billentyű-dispatch + perzisztencia', () => {
 })
 
 describe('useSortStore — folder-scoped visszatöltés', () => {
-  it('ugyanazon mappa újraválasztva visszatölti a döntéseket', async () => {
+  it('ugyanazon mappa újraválasztva a pickeren felajánlja a folytatást, confirmResume visszatölt', async () => {
     const dir = makeFakeDir('Nyár', FILES)
     await useSortStore.getState().pickFolder(gatewayFor(dir))
     useSortStore.getState().applyKeyEvent(key('a')) // a.jpg → a
@@ -111,11 +111,40 @@ describe('useSortStore — folder-scoped visszatöltés', () => {
     useSortStore.setState(initial, true)
     const dir2 = makeFakeDir('Nyár', FILES)
     await useSortStore.getState().pickFolder(gatewayFor(dir2))
+
+    // a pickeren marad, resume-ajánlattal (spec 4.5)
+    const afterPick = useSortStore.getState()
+    expect(afterPick.screen).toBe('picker')
+    expect(afterPick.resumePrompt?.restoredCount).toBe(2)
+    expect(afterPick.resumePrompt?.folderName).toBe('Nyár')
+
+    // Folytatás → visszatölt és belép a nézetbe
+    useSortStore.getState().confirmResume()
     const s = useSortStore.getState()
+    expect(s.screen).toBe('sorting')
+    expect(s.resumePrompt).toBeNull()
     expect(s.decisions['a.jpg']).toEqual({ fileName: 'a.jpg', bucket: 'a' })
     expect(s.decisions['b.jpg']).toEqual({ fileName: 'b.jpg', bucket: 'a' })
     expect(s.position).toBe(2)
     expect(s.restoredNotice).toMatch(/visszatöltve/i)
+  })
+
+  it('discardResume eldobja a mentést és friss munkamenettel indít', async () => {
+    const dir = makeFakeDir('Tél', FILES)
+    await useSortStore.getState().pickFolder(gatewayFor(dir))
+    useSortStore.getState().applyKeyEvent(key('a'))
+
+    useSortStore.setState(initial, true)
+    const dir2 = makeFakeDir('Tél', FILES)
+    await useSortStore.getState().pickFolder(gatewayFor(dir2))
+    expect(useSortStore.getState().resumePrompt).not.toBeNull()
+
+    useSortStore.getState().discardResume()
+    const s = useSortStore.getState()
+    expect(s.screen).toBe('sorting')
+    expect(s.decisions).toEqual({})
+    expect(s.position).toBe(0)
+    expect(localStorage.getItem(storageKey('Tél'))).toBeNull()
   })
 
   it('másik mappa nem látja az előző munkamenetét', async () => {

@@ -102,10 +102,12 @@ export function reconcile(
   let historyCursor = persisted.historyCursor - purgedBeforeCursor
   historyCursor = Math.max(0, Math.min(historyCursor, purgedHistory.length))
 
-  // 5.
+  // 5. A purgedHistory már a currentSet-re szűrt, így a fileName mindig megtalálható;
+  // a `?? items.length` defenzív fallback egy esetleges invariáns-sérülésre (silent
+  // rossz-ugrás helyett a sor végére visz).
   const history: HistoryEntry[] = purgedHistory.map((h) => ({
     ...h,
-    position: nameToIndex.get(h.fileName)!,
+    position: nameToIndex.get(h.fileName) ?? items.length,
   }))
 
   // 6.

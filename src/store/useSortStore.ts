@@ -50,11 +50,30 @@ function isFolderReadError(e: unknown): e is FolderReadError {
   return typeof e === 'object' && e !== null && 'type' in e
 }
 
+/**
+ * A pickeren megjelenő „mentett munkamenet ehhez a mappához" ajánlat (spec 4.5).
+ * A kiválasztás UTÁN, a Tinder-nézetbe lépés ELŐTT jelenik meg.
+ */
+export interface ResumePrompt {
+  folderName: string
+  dirHandle: FileSystemDirectoryHandle
+  items: MediaItem[]
+  restoredCount: number
+  restored: {
+    decisions: Record<string, Decision>
+    history: HistoryEntry[]
+    historyCursor: number
+    position: number
+  }
+}
+
 interface StoreState extends SortState {
   screen: Screen
   dirHandle: FileSystemDirectoryHandle | null
   pickerError: string | null
   restoredNotice: string | null
+  /** Ha nem null: a picker felajánlja a mentett munkamenet folytatását. */
+  resumePrompt: ResumePrompt | null
   isSorting: boolean
   sortProgress: SortProgress | null
   sortResult: MoveResult | null
@@ -62,6 +81,8 @@ interface StoreState extends SortState {
   videoToggleNonce: number
 
   pickFolder: (gateway: FileSystemGateway) => Promise<void>
+  confirmResume: () => void
+  discardResume: () => void
   applyKeyEvent: (e: KeyEvent) => KeyAction
   undo: () => void
   redo: () => void
@@ -104,13 +125,14 @@ export const useSortStore = create<StoreState>((set, get) => {
     dirHandle: null,
     pickerError: null,
     restoredNotice: null,
+    resumePrompt: null,
     isSorting: false,
     sortProgress: null,
     sortResult: null,
     videoToggleNonce: 0,
 
     async pickFolder(gateway) {
-      set({ pickerError: null, restoredNotice: null })
+      set({ pickerError: null, restoredNotice: null, resumePrompt: null })
       let result
       try {
         result = await readFolder(gateway)
@@ -123,36 +145,85 @@ export const useSortStore = create<StoreState>((set, get) => {
       }
 
       const { folderName, dirHandle, items } = result
-      let decisions: Record<string, Decision> = {}
-      let history: HistoryEntry[] = []
-      let historyCursor = 0
-      let position = 0
-      let restoredNotice: string | null = null
 
+      // Folder-scoped mentett munkamenet? Ha van használható döntés, a PICKEREN
+      // ajánljuk fel a folytatást (spec 4.5) — nem ugrunk automatikusan a nézetbe.
       const persisted = loadSession(folderName)
       if (persisted) {
         const r = reconcile(persisted, items)
-        decisions = r.decisions
-        history = r.history
-        historyCursor = r.historyCursor
-        position = r.position
-        const restored = Object.keys(decisions).length
-        if (restored > 0) {
-          restoredNotice = `Mentett munkamenet visszatöltve: ${restored} korábbi döntés.`
+        const restoredCount = Object.keys(r.decisions).length
+        if (restoredCount > 0) {
+          set({
+            resumePrompt: {
+              folderName,
+              dirHandle,
+              items,
+              restoredCount,
+              restored: {
+                decisions: r.decisions,
+                history: r.history,
+                historyCursor: r.historyCursor,
+                position: r.position,
+              },
+            },
+          })
+          return
         }
       }
 
+      // Nincs (használható) mentés → friss munkamenet.
       set({
         screen: 'sorting',
         dirHandle,
         folderName,
         items,
-        position,
-        decisions,
-        history,
-        historyCursor,
+        position: 0,
+        decisions: {},
+        history: [],
+        historyCursor: 0,
         pickerError: null,
-        restoredNotice,
+        restoredNotice: null,
+        sortResult: null,
+        sortProgress: null,
+      })
+    },
+
+    confirmResume() {
+      const rp = get().resumePrompt
+      if (!rp) return
+      set({
+        screen: 'sorting',
+        dirHandle: rp.dirHandle,
+        folderName: rp.folderName,
+        items: rp.items,
+        position: rp.restored.position,
+        decisions: rp.restored.decisions,
+        history: rp.restored.history,
+        historyCursor: rp.restored.historyCursor,
+        resumePrompt: null,
+        pickerError: null,
+        restoredNotice: `Mentett munkamenet visszatöltve: ${rp.restoredCount} korábbi döntés.`,
+        sortResult: null,
+        sortProgress: null,
+      })
+    },
+
+    discardResume() {
+      const rp = get().resumePrompt
+      if (!rp) return
+      clearSession(rp.folderName)
+      set({
+        screen: 'sorting',
+        dirHandle: rp.dirHandle,
+        folderName: rp.folderName,
+        items: rp.items,
+        position: 0,
+        decisions: {},
+        history: [],
+        historyCursor: 0,
+        resumePrompt: null,
+        pickerError: null,
+        restoredNotice: null,
         sortResult: null,
         sortProgress: null,
       })
@@ -198,6 +269,7 @@ export const useSortStore = create<StoreState>((set, get) => {
         dirHandle: null,
         pickerError: null,
         restoredNotice: null,
+        resumePrompt: null,
         isSorting: false,
         sortProgress: null,
         sortResult: null,
@@ -212,6 +284,7 @@ export const useSortStore = create<StoreState>((set, get) => {
         dirHandle: null,
         pickerError: null,
         restoredNotice: null,
+        resumePrompt: null,
         isSorting: false,
         sortProgress: null,
         sortResult: null,

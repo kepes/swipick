@@ -43,4 +43,29 @@ describe('FolderPicker', () => {
     render(<FolderPicker />)
     expect(screen.getByText('Teszthiba üzenet')).toBeInTheDocument()
   })
+
+  it('mentett munkamenetnél resume-ajánlatot mutat Folytatás + Újrakezdés gombbal', () => {
+    const confirmResume = vi.fn()
+    const discardResume = vi.fn()
+    useSortStore.setState({
+      resumePrompt: {
+        folderName: 'Nyár',
+        dirHandle: {} as FileSystemDirectoryHandle,
+        items: [],
+        restoredCount: 5,
+        restored: { decisions: {}, history: [], historyCursor: 0, position: 0 },
+      },
+      confirmResume,
+      discardResume,
+    })
+    render(<FolderPicker />)
+    expect(screen.getByText(/mentett munkamenet tartozik/i)).toBeInTheDocument()
+    expect(screen.getByText('Nyár')).toBeInTheDocument()
+    // a pick gomb helyett a resume gombok látszanak
+    expect(screen.queryByRole('button', { name: /mappa kiválasztása/i })).not.toBeInTheDocument()
+    screen.getByRole('button', { name: /folytatás/i }).click()
+    expect(confirmResume).toHaveBeenCalled()
+    screen.getByRole('button', { name: /újrakezdés/i }).click()
+    expect(discardResume).toHaveBeenCalled()
+  })
 })
