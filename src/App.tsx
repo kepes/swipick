@@ -22,7 +22,9 @@ function SortingView() {
       </header>
 
       <main className={styles.main}>
-        <ProgressBadge position={position} total={total} />
+        <div className={styles.progress}>
+          <ProgressBadge position={position} total={total} />
+        </div>
         <CardStack />
       </main>
 

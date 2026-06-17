@@ -1,29 +1,56 @@
 .layout {
-  display: grid;
-  grid-template-rows: auto 1fr auto;
+  position: relative;
+  width: 100%;
   height: 100%;
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 16px 20px 20px;
-  gap: 12px;
+  overflow: hidden;
+}
+
+/* A kép a teljes viewportot kitölti; a fejléc/lábléc rá-úszik (overlay). */
+.main {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
 }
 
 .header {
-  min-height: 96px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 3;
+  display: flex;
+  justify-content: center;
+  padding: 12px;
+  pointer-events: none;
 }
 
-.main {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 14px;
-  min-height: 0;
+.header > * {
+  pointer-events: auto;
+  max-width: 100%;
+}
+
+.progress {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 4;
+  pointer-events: none;
 }
 
 .footer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 3;
   display: flex;
   justify-content: center;
+  padding: 12px;
+  pointer-events: none;
+}
+
+.footer > * {
+  pointer-events: auto;
 }
 
 .notice {
