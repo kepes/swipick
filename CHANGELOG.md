@@ -10,3 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Number bucket folders when target directory already exists (e.g. `b/` → `b_01/` → `b_02/`); the trash bucket (`_torolt`) is still reused across sorts
+- Tinder view now fills the full viewport; header, footer, and progress badge overlay the image instead of stacking below it
+
+### Fixed
+
+- Media card now re-renders once its object URL is ready, preventing a blank card on first display
