@@ -23,6 +23,8 @@ export function classifyKey(e: KeyEvent): KeyAction {
   // 5. Nyilak.
   if (e.key === 'ArrowRight') return { type: 'keep' }
   if (e.key === 'ArrowLeft') return { type: 'delete' }
+  if (e.key === 'ArrowDown') return { type: 'undo' }
+  if (e.key === 'ArrowUp') return { type: 'redo' }
 
   // 6. Betű-/szám-kosár (case-insensitive, Shift megengedett; Alt NEM).
   if (lower.length === 1 && !e.altKey) {

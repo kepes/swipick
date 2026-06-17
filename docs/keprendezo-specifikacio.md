@@ -65,8 +65,8 @@ A jelenleg fent lévő képre vonatkozik. **Csak a betű- (`a`–`z`) és szám-
 | Billentyű | Funkció |
 |---|---|
 | **`Space`** | A fent lévő videó lejátszása / szüneteltetése. |
-| **`Ctrl+Z`** | Undo (visszavonás) — lásd 4.1. |
-| **`Ctrl+Y`** (vagy `Ctrl+Shift+Z`) | Redo (újra) — lásd 4.2. |
+| **`Ctrl+Z`** (vagy **lefelé nyíl ↓**) | Undo (visszavonás) — lásd 4.1. |
+| **`Ctrl+Y`** (vagy `Ctrl+Shift+Z`, illetve **felfelé nyíl ↑**) | Redo (újra) — lásd 4.2. |
 | **`Esc`** | Aktuális animáció / fókusz megszakítása. |
 
 - A **Rendezés**nek **nincs** billentyű-gyorsindítása — kizárólag a képernyőn lévő gombra kattintással indul (lásd 4.3), hogy véletlen billentyű-lenyomás ne mozgasson fájlokat.
@@ -87,12 +87,12 @@ A jelenleg fent lévő képre vonatkozik. **Csak a betű- (`a`–`z`) és szám-
 ## 4. Nem billentyűs funkciók (gombok)
 
 ### 4.1 Undo (visszavonás)
-- Gombbal **és** `Ctrl+Z` billentyűvel is elérhető.
+- Gombbal **és** `Ctrl+Z` / **lefelé nyíl (↓)** billentyűvel is elérhető.
 - Az utolsó képbesorolást visszavonja: a kép visszakerül az aktuális pozícióba, kikerül a kosárból, és újra fent lesz.
 - Több lépés visszavonható egymás után.
 
 ### 4.2 Redo (újra)
-- Gombbal **és** `Ctrl+Y` (vagy `Ctrl+Shift+Z`) billentyűvel is elérhető.
+- Gombbal **és** `Ctrl+Y` (vagy `Ctrl+Shift+Z`, illetve **felfelé nyíl ↑**) billentyűvel is elérhető.
 - Egy visszavont műveletet megismétel.
 - Új művelet elvégzése után a redo-lánc törlődik.
 

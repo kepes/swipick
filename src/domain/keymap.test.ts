@@ -49,6 +49,12 @@ describe('classifyKey — speciális kulcsok', () => {
   it('ArrowLeft → delete', () => {
     expect(classifyKey(ev('ArrowLeft'))).toEqual({ type: 'delete' })
   })
+  it('ArrowDown → undo', () => {
+    expect(classifyKey(ev('ArrowDown'))).toEqual({ type: 'undo' })
+  })
+  it('ArrowUp → redo', () => {
+    expect(classifyKey(ev('ArrowUp'))).toEqual({ type: 'redo' })
+  })
 })
 
 describe('classifyKey — betű-kosarak', () => {
@@ -101,7 +107,7 @@ describe('classifyKey — modifier + betű → noop (kivéve z/y)', () => {
 })
 
 describe('classifyKey — noop esetek', () => {
-  const noopKeys = ['/', '\\', ':', '*', '?', '<', '>', '|', '.', 'Tab', 'Enter', 'F1', 'ArrowUp']
+  const noopKeys = ['/', '\\', ':', '*', '?', '<', '>', '|', '.', 'Tab', 'Enter', 'F1']
   for (const k of noopKeys) {
     it(`'${k}' → noop`, () => {
       expect(classifyKey(ev(k))).toEqual({ type: 'noop' })
