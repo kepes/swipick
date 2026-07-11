@@ -3,9 +3,9 @@ import { useSortStore } from '../store/useSortStore'
 import type { KeyEvent } from '../domain/types'
 
 /**
- * Globális billentyűkezelés a Tinder-nézethez. Csak a 'sorting' képernyőn aktív.
- * A domain-döntést a store.applyKeyEvent intézi; itt csak a böngésző-default
- * megakadályozása + a Space (videó toggle) UI-hatás történik.
+ * Global keyboard handling for the Tinder view. Only active on the 'sorting' screen.
+ * The domain decision is handled by store.applyKeyEvent; here we only prevent the
+ * browser default + the Space (video toggle) UI effect happens.
  */
 export function useKeyboard() {
   useEffect(() => {
@@ -24,15 +24,15 @@ export function useKeyboard() {
 
       switch (action.type) {
         case 'space':
-          e.preventDefault() // ne görgessen az oldal
+          e.preventDefault() // don't scroll the page
           useSortStore.getState().toggleVideo()
           break
         case 'undo':
         case 'redo':
-          e.preventDefault() // ne süljön el a böngésző saját undo-ja
+          e.preventDefault() // don't trigger the browser's own undo
           break
         case 'esc':
-          // Az animáció-megszakítást a CardStack/MediaCard kezeli; itt nincs teendő.
+          // Animation cancellation is handled by CardStack/MediaCard; nothing to do here.
           break
         default:
           break

@@ -9,11 +9,11 @@ const initial = useSortStore.getInitialState()
 
 beforeEach(() => {
   useSortStore.setState(initial, true)
-  // jsdom: a videó/animáció ne dobjon
+  // jsdom: don't let video/animation throw
   HTMLMediaElement.prototype.play = vi.fn().mockResolvedValue(undefined)
   HTMLMediaElement.prototype.pause = vi.fn()
-  // a FolderPicker a realGateway.isSupported()-et nézi → adjunk neki egy stubot,
-  // hogy a „Mappa kiválasztása" gomb renderelődjön (a tényleges pickert megkerüljük)
+  // FolderPicker checks realGateway.isSupported() → give it a stub
+  // so the "Choose folder" button renders (we bypass the actual picker)
   window.showDirectoryPicker = vi.fn()
 })
 afterEach(() => vi.restoreAllMocks())
@@ -38,47 +38,47 @@ const FILES = [
   { name: 'c.png', lastModified: 3 },
 ]
 
-describe('App — teljes flow (picker → Tinder-nézet → Rendezés)', () => {
-  it('mappaválasztótól a rendezés eredményéig', async () => {
+describe('App — full flow (picker → Tinder view → Sort)', () => {
+  it('from folder picker to the sort result', async () => {
     render(<App />)
 
     // 1. Picker
-    expect(screen.getByRole('button', { name: /mappa kiválasztása/i })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /choose folder/i })).toBeInTheDocument()
 
-    // 2. Mappa beolvasása (a fake gateway-jel, a valós picker megkerülésével)
-    const dir = makeFakeDir('Vakáció', FILES)
+    // 2. Read the folder (with the fake gateway, bypassing the real picker)
+    const dir = makeFakeDir('Vacation', FILES)
     await act(async () => {
       await useSortStore.getState().pickFolder(gatewayFor(dir))
     })
 
-    // 3. Tinder-nézet: haladásjelző "1 / 3"
+    // 3. Tinder view: progress indicator "1 / 3"
     expect(screen.getByText('1 / 3')).toBeInTheDocument()
 
-    // 4. Kosarazás billentyűkkel: a.jpg → 'a', b.jpg → törlés, c.png → marad (jobbra)
+    // 4. Bucketing with keys: a.jpg → 'a', b.jpg → delete, c.png → keep (right)
     press({ key: 'a' })
     expect(screen.getByText('2 / 3')).toBeInTheDocument()
     press({ key: 'ArrowLeft' })
     expect(screen.getByText('3 / 3')).toBeInTheDocument()
     press({ key: 'ArrowRight' })
 
-    // 5. Kész nézet a pakli végén
-    await waitFor(() => expect(screen.getByText(/végignézted/i)).toBeInTheDocument())
+    // 5. Done view at the end of the deck
+    await waitFor(() => expect(screen.getByText(/reviewed everything/i)).toBeInTheDocument())
 
-    // 6. Rendezés indítása a Kész-képernyő nagy gombjával
-    const sortButtons = screen.getAllByRole('button', { name: /^rendezés$/i })
+    // 6. Start the Sort with the big button on the Done screen
+    const sortButtons = screen.getAllByRole('button', { name: /^sort$/i })
     await act(async () => {
       fireEvent.click(sortButtons[sortButtons.length - 1])
     })
 
-    // 7. Eredmény-képernyő
-    await waitFor(() => expect(screen.getByText(/kész/i)).toBeInTheDocument())
+    // 7. Result screen
+    await waitFor(() => expect(screen.getByText(/done/i)).toBeInTheDocument())
     expect(useSortStore.getState().sortResult).toEqual({ moved: 1, deleted: 1, failed: [] })
 
-    // 8. A fájlrendszerben: 'a/' és '_torolt/' mappa létrejött, c.png a rootban maradt
+    // 8. In the file system: 'a/' and '_deleted/' folders were created, c.png stayed in root
     expect(dir.peekDir('a')).toBeDefined()
-    expect(dir.peekDir('_torolt')).toBeDefined()
+    expect(dir.peekDir('_deleted')).toBeDefined()
     expect(dir.childNames()).toContain('c.png')
-    expect(dir.childNames()).not.toContain('a.jpg') // átmozgatva
-    expect(dir.childNames()).not.toContain('b.jpg') // törölve (_torolt-ba)
+    expect(dir.childNames()).not.toContain('a.jpg') // moved
+    expect(dir.childNames()).not.toContain('b.jpg') // deleted (into _deleted)
   })
 })

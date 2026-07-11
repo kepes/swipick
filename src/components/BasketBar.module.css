@@ -24,7 +24,7 @@
 }
 
 .thumb {
-  /* A width/height inline motion-style-ból jön (dock-nagyítás); itt csak fallback. */
+  /* width/height come from the inline motion style (dock magnification); this is just a fallback. */
   width: 56px;
   height: 56px;
   object-fit: cover;

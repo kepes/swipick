@@ -18,11 +18,11 @@ function dec(fileName: string, bucket: string): Decision {
 }
 
 describe('deriveBuckets', () => {
-  it('üres decisions → üres objektum', () => {
+  it('empty decisions → empty object', () => {
     expect(deriveBuckets([item('a.jpg')], {})).toEqual({})
   })
 
-  it('members sorrend = items (queue) sorrend, thumbnail = members[0]', () => {
+  it('members order = items (queue) order, thumbnail = members[0]', () => {
     const items = [item('1.jpg'), item('2.jpg'), item('3.jpg')]
     const decisions: Record<string, Decision> = {
       '3.jpg': dec('3.jpg', 'a'),
@@ -36,14 +36,14 @@ describe('deriveBuckets', () => {
     expect(buckets['a'].kind).toBe('normal')
   })
 
-  it('delete kosár kind = delete', () => {
+  it('delete bucket kind = delete', () => {
     const items = [item('x.jpg')]
     const buckets = deriveBuckets(items, { 'x.jpg': dec('x.jpg', DELETE_BUCKET) })
     expect(buckets[DELETE_BUCKET].kind).toBe('delete')
     expect(buckets[DELETE_BUCKET].thumbnail).toBe('x.jpg')
   })
 
-  it('több kosár külön members listával', () => {
+  it('multiple buckets with separate members lists', () => {
     const items = [item('1.jpg'), item('2.jpg'), item('3.jpg')]
     const buckets = deriveBuckets(items, {
       '1.jpg': dec('1.jpg', 'a'),
@@ -54,7 +54,7 @@ describe('deriveBuckets', () => {
     expect(buckets['b'].members).toEqual(['2.jpg'])
   })
 
-  it('nem mutálja a bemenetet', () => {
+  it('does not mutate the input', () => {
     const items = [item('1.jpg')]
     const decisions = { '1.jpg': dec('1.jpg', 'a') }
     const frozenItems = Object.freeze(items)

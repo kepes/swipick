@@ -28,28 +28,28 @@ describe('FolderPicker', () => {
 
   it('renders the pick button when supported', () => {
     render(<FolderPicker />)
-    expect(screen.getByRole('button', { name: /mappa kiválasztása/i })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /choose folder/i })).toBeInTheDocument()
   })
 
   it('shows unsupported warning when isSupported returns false', () => {
     vi.mocked(realGateway.isSupported).mockReturnValue(false)
     render(<FolderPicker />)
-    expect(screen.getByText(/ez a böngésző nem támogatott/i)).toBeInTheDocument()
-    expect(screen.queryByRole('button', { name: /mappa kiválasztása/i })).not.toBeInTheDocument()
+    expect(screen.getByText(/this browser is not supported/i)).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /choose folder/i })).not.toBeInTheDocument()
   })
 
   it('shows pickerError from store', () => {
-    useSortStore.setState({ pickerError: 'Teszthiba üzenet' } as Parameters<typeof useSortStore.setState>[0], false)
+    useSortStore.setState({ pickerError: 'Test error message' } as Parameters<typeof useSortStore.setState>[0], false)
     render(<FolderPicker />)
-    expect(screen.getByText('Teszthiba üzenet')).toBeInTheDocument()
+    expect(screen.getByText('Test error message')).toBeInTheDocument()
   })
 
-  it('mentett munkamenetnél resume-ajánlatot mutat Folytatás + Újrakezdés gombbal', () => {
+  it('shows a resume offer with Resume + Start over buttons when a session was saved', () => {
     const confirmResume = vi.fn()
     const discardResume = vi.fn()
     useSortStore.setState({
       resumePrompt: {
-        folderName: 'Nyár',
+        folderName: 'Summer',
         dirHandle: {} as FileSystemDirectoryHandle,
         items: [],
         restoredCount: 5,
@@ -59,13 +59,13 @@ describe('FolderPicker', () => {
       discardResume,
     })
     render(<FolderPicker />)
-    expect(screen.getByText(/mentett munkamenet tartozik/i)).toBeInTheDocument()
-    expect(screen.getByText('Nyár')).toBeInTheDocument()
-    // a pick gomb helyett a resume gombok látszanak
-    expect(screen.queryByRole('button', { name: /mappa kiválasztása/i })).not.toBeInTheDocument()
-    screen.getByRole('button', { name: /folytatás/i }).click()
+    expect(screen.getByText(/has a saved session/i)).toBeInTheDocument()
+    expect(screen.getByText('Summer')).toBeInTheDocument()
+    // the resume buttons show instead of the pick button
+    expect(screen.queryByRole('button', { name: /choose folder/i })).not.toBeInTheDocument()
+    screen.getByRole('button', { name: /resume/i }).click()
     expect(confirmResume).toHaveBeenCalled()
-    screen.getByRole('button', { name: /újrakezdés/i }).click()
+    screen.getByRole('button', { name: /start over/i }).click()
     expect(discardResume).toHaveBeenCalled()
   })
 })

@@ -20,12 +20,12 @@ import { clearSession, loadSession, reconcile, saveSession } from './persist'
 
 export type Screen = 'picker' | 'sorting' | 'done'
 
-/** A Rendezés bemenete: kosaranként a mozgatandó fájl-handle-ök (queue-sorrendben). */
+/** Input to the Sort operation: per bucket, the file handles to move (in queue order). */
 export function buildSortPlan(items: MediaItem[], decisions: Record<string, Decision>): SortPlan {
   const plan: SortPlan = new Map()
   for (const item of items) {
     const decision = decisions[item.fileName]
-    if (!decision) continue // keep / besorolatlan → helyben marad
+    if (!decision) continue // keep / unclassified → stays in place
     const list = plan.get(decision.bucket) ?? []
     list.push(item.handle)
     plan.set(decision.bucket, list)
@@ -36,13 +36,13 @@ export function buildSortPlan(items: MediaItem[], decisions: Record<string, Deci
 function pickerMessage(err: FolderReadError): string | null {
   switch (err.type) {
     case 'aborted':
-      return null // néma — a user megszakította
+      return null // silent — the user cancelled
     case 'permission-denied':
-      return 'Írási engedély szükséges a mappához — a Képrendező fájlokat mozgat.'
+      return 'Write permission is required for the folder — Swipick moves files.'
     case 'empty':
-      return 'Ebben a mappában nincs megjeleníthető kép vagy videó.'
+      return 'This folder has no images or videos to display.'
     case 'unsupported-browser':
-      return 'Ez a böngésző nem támogatott. Használj Chrome-ot vagy Edge-et (File System Access API kell).'
+      return 'This browser is not supported. Use Chrome or Edge (the File System Access API is required).'
   }
 }
 
@@ -51,8 +51,8 @@ function isFolderReadError(e: unknown): e is FolderReadError {
 }
 
 /**
- * A pickeren megjelenő „mentett munkamenet ehhez a mappához" ajánlat (spec 4.5).
- * A kiválasztás UTÁN, a Tinder-nézetbe lépés ELŐTT jelenik meg.
+ * The "saved session for this folder" offer shown on the picker (spec 4.5).
+ * It appears AFTER selection, BEFORE entering the Tinder view.
  */
 export interface ResumePrompt {
   folderName: string
@@ -72,12 +72,12 @@ interface StoreState extends SortState {
   dirHandle: FileSystemDirectoryHandle | null
   pickerError: string | null
   restoredNotice: string | null
-  /** Ha nem null: a picker felajánlja a mentett munkamenet folytatását. */
+  /** If not null: the picker offers to resume the saved session. */
   resumePrompt: ResumePrompt | null
   isSorting: boolean
   sortProgress: SortProgress | null
   sortResult: MoveResult | null
-  /** UI-jel: minden Space-lenyomáskor nő — a CardStack erre togglel videót. */
+  /** UI signal: increases on every Space press — the CardStack toggles video on this. */
   videoToggleNonce: number
 
   pickFolder: (gateway: FileSystemGateway) => Promise<void>
@@ -102,7 +102,7 @@ const emptyDomain: SortState = {
 }
 
 export const useSortStore = create<StoreState>((set, get) => {
-  /** Domain-state alkalmazása + folder-scoped mentés. */
+  /** Apply domain state + folder-scoped save. */
   function commit(next: SortState) {
     set(next)
     if (next.folderName) saveSession(next)
@@ -146,8 +146,8 @@ export const useSortStore = create<StoreState>((set, get) => {
 
       const { folderName, dirHandle, items } = result
 
-      // Folder-scoped mentett munkamenet? Ha van használható döntés, a PICKEREN
-      // ajánljuk fel a folytatást (spec 4.5) — nem ugrunk automatikusan a nézetbe.
+      // Folder-scoped saved session? If there's a usable decision, we offer to resume
+      // on the PICKER (spec 4.5) — we don't jump automatically into the view.
       const persisted = loadSession(folderName)
       if (persisted) {
         const r = reconcile(persisted, items)
@@ -171,7 +171,7 @@ export const useSortStore = create<StoreState>((set, get) => {
         }
       }
 
-      // Nincs (használható) mentés → friss munkamenet.
+      // No (usable) save → fresh session.
       set({
         screen: 'sorting',
         dirHandle,
@@ -202,7 +202,7 @@ export const useSortStore = create<StoreState>((set, get) => {
         historyCursor: rp.restored.historyCursor,
         resumePrompt: null,
         pickerError: null,
-        restoredNotice: `Mentett munkamenet visszatöltve: ${rp.restoredCount} korábbi döntés.`,
+        restoredNotice: `Saved session restored: ${rp.restoredCount} earlier decisions.`,
         sortResult: null,
         sortProgress: null,
       })
@@ -238,7 +238,7 @@ export const useSortStore = create<StoreState>((set, get) => {
       } else if (action.type === 'redo') {
         commit(redoReducer(domainOf(get())))
       }
-      // space / esc / noop → a hívó (useKeyboard) kezeli, domain nem változik
+      // space / esc / noop → handled by the caller (useKeyboard), domain doesn't change
       return action
     },
 
@@ -277,7 +277,7 @@ export const useSortStore = create<StoreState>((set, get) => {
     },
 
     backToPicker() {
-      // A Rendezés után: nem töröl semmit (a munkamenet siker esetén már törölt), csak visszanavigál.
+      // After the Sort operation: doesn't delete anything (on success the session is already cleared), just navigates back.
       set({
         ...emptyDomain,
         screen: 'picker',

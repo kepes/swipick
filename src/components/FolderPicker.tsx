@@ -9,27 +9,27 @@ export function FolderPicker() {
 
   return (
     <div className={styles.container}>
-      <h1 className={styles.title}>Képrendező</h1>
-      <p className={styles.subtitle}>Válassz egy mappát, és billentyűkkel rendezd a képeket.</p>
+      <h1 className={styles.title}>Swipick</h1>
+      <p className={styles.subtitle}>Pick a folder and sort your images with the keyboard.</p>
 
       {resume ? (
         <div className={styles.resume}>
           <p className={styles.resumeText}>
-            A(z) <strong>{resume.folderName}</strong> mappához mentett munkamenet tartozik
-            (<strong>{resume.restoredCount}</strong> korábbi döntés).
+            The folder <strong>{resume.folderName}</strong> has a saved session
+            (<strong>{resume.restoredCount}</strong> earlier decisions).
           </p>
           <div className={styles.resumeActions}>
             <button
               className={styles.button}
               onClick={() => useSortStore.getState().confirmResume()}
             >
-              Folytatás
+              Resume
             </button>
             <button
               className={styles.secondary}
               onClick={() => useSortStore.getState().discardResume()}
             >
-              Újrakezdés
+              Start over
             </button>
           </div>
         </div>
@@ -38,11 +38,11 @@ export function FolderPicker() {
           className={styles.button}
           onClick={() => useSortStore.getState().pickFolder(realGateway)}
         >
-          Mappa kiválasztása
+          Choose folder
         </button>
       ) : (
         <div className={styles.warning}>
-          Ez a böngésző nem támogatott — használj Chrome-ot vagy Edge-et.
+          This browser is not supported — use Chrome or Edge.
         </div>
       )}
 

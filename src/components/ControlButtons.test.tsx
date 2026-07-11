@@ -17,27 +17,27 @@ describe('ControlButtons', () => {
   it('Undo disabled when historyCursor=0', () => {
     useSortStore.setState({ historyCursor: 0, history: [] })
     render(<ControlButtons />)
-    expect(screen.getByText(/visszavon/)).toBeDisabled()
+    expect(screen.getByText(/Undo/)).toBeDisabled()
   })
 
   it('Undo enabled, Redo disabled when cursor equals history length', () => {
     useSortStore.setState({ historyCursor: 1, history: fakeHistory })
     render(<ControlButtons />)
-    expect(screen.getByText(/visszavon/)).not.toBeDisabled()
-    expect(screen.getByText('újra')).toBeDisabled()
+    expect(screen.getByText(/Undo/)).not.toBeDisabled()
+    expect(screen.getByText('Redo')).toBeDisabled()
   })
 
-  it('calls runOrganize when Rendezés clicked', () => {
+  it('calls runOrganize when Sort clicked', () => {
     const spy = vi.fn().mockResolvedValue(undefined)
     useSortStore.setState({ runOrganize: spy, isSorting: false })
     render(<ControlButtons />)
-    fireEvent.click(screen.getByText('Rendezés'))
+    fireEvent.click(screen.getByText('Sort'))
     expect(spy).toHaveBeenCalledOnce()
   })
 
-  it('Rendezés disabled when isSorting=true', () => {
+  it('Sort disabled when isSorting=true', () => {
     useSortStore.setState({ isSorting: true })
     render(<ControlButtons />)
-    expect(screen.getByText('Rendezés')).toBeDisabled()
+    expect(screen.getByText('Sort')).toBeDisabled()
   })
 })

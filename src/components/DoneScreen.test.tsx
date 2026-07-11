@@ -10,14 +10,14 @@ beforeEach(() => {
 describe('DoneScreen', () => {
   it('renders the done message', () => {
     render(<DoneScreen />)
-    expect(screen.getByText(/Végignézted az összes elemet/)).toBeTruthy()
+    expect(screen.getByText(/You've reviewed everything/)).toBeTruthy()
   })
 
   it('calls runOrganize on button click', () => {
     const runOrganize = vi.fn()
     useSortStore.setState({ runOrganize } as never)
     render(<DoneScreen />)
-    fireEvent.click(screen.getByText('Rendezés'))
+    fireEvent.click(screen.getByText('Sort'))
     expect(runOrganize).toHaveBeenCalled()
   })
 })

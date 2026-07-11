@@ -1,123 +1,124 @@
-# Képrendező
+# Swipic
 
-Lokálisan, böngészőben futó webalkalmazás képek és videók **villámgyors, billentyűzet-vezérelt rendszerezésére**. Kiválasztasz egy mappát, az app Tinder-szerűen egyesével feldobja a benne lévő médiát, te billentyűkkel kosarakba sorolod, a végén pedig egyetlen kattintással **valódi fájlműveletekkel** almappákba rendezi őket.
+A local, browser-based web app for **lightning-fast, keyboard-driven organizing** of images and videos. You pick a folder, the app deals out the media inside it one at a time Tinder-style, you sort each item into buckets with the keyboard, and at the end a single click organizes them into subfolders with **real file operations**.
 
-A teljes folyamat a böngészőben, **szerver és adatbázis nélkül** zajlik a [File System Access API](https://developer.mozilla.org/en-US/docs/Web/API/File_System_Access_API) segítségével.
+The whole flow runs in the browser, **with no server and no database**, using the [File System Access API](https://developer.mozilla.org/en-US/docs/Web/API/File_System_Access_API).
 
-## Tartalomjegyzék
+## Table of contents
 
-1. [Funkciók](#funkciók)
-2. [Böngésző-követelmény](#böngésző-követelmény)
-3. [Telepítés és futtatás](#telepítés-és-futtatás)
-4. [Használat](#használat)
-5. [Billentyűk](#billentyűk)
-6. [Hogyan rendez (fájlműveletek)](#hogyan-rendez-fájlműveletek)
-7. [Munkamenet-mentés](#munkamenet-mentés)
-8. [npm scriptek](#npm-scriptek)
-9. [Architektúra](#architektúra)
+1. [Features](#features)
+2. [Browser requirement](#browser-requirement)
+3. [Install and run](#install-and-run)
+4. [Usage](#usage)
+5. [Keys](#keys)
+6. [How it sorts (file operations)](#how-it-sorts-file-operations)
+7. [Session saving](#session-saving)
+8. [npm scripts](#npm-scripts)
+9. [Architecture](#architecture)
 
-## Funkciók
+## Features
 
-- **Tinder-nézet:** egyszerre egy elem nagyban, finom „eldobás"-animációval, haladásjelzővel (`37 / 240`).
-- **Kép és videó:** a videók némítva, ismétlődő (loop) előnézettel, automatikusan indulnak; `Space`-szel play/pause.
-- **Következő elemek előnézete:** a bal alsó sarokban a soron következő két médiaelem kicsiben (a következő jobbra, az azt követő balra); képnél és videónál egyaránt.
-- **Dinamikus kosarak:** bármelyik betű/szám billentyű kosarat hoz létre (max. 36 + „törlés").
-- **Nagyítható kosársor:** a kosarak bélyegképei a fejlécben nagyobban jelennek meg, és ha föléjük viszed az egeret, macOS dock-szerűen kinagyolódnak (a kurzorhoz legközelebbi a legnagyobb).
-- **Undo / Redo:** korlátlan lépés visszavonható és újra megismételhető.
-- **Folder-scoped munkamenet-mentés:** a döntéseid a böngésző `localStorage`-ába mentődnek, mappánként külön; legközelebb folytathatod onnan, ahol abbahagytad.
-- **Valódi rendezés:** a „Rendezés" gomb almappákba mozgatja a fájlokat ütközéskezeléssel.
+- **Tinder view:** one item at a time, large, with a subtle "toss" animation and a progress indicator (`37 / 240`).
+- **Images and videos:** videos play automatically, muted, with a looping preview; toggle play/pause with `Space`.
+- **Preview of upcoming items:** in the bottom-left corner, the next two media items shown small (the next one on the right, the one after it on the left); for both images and videos.
+- **Dynamic buckets:** any letter/number key creates a bucket (up to 36 + "delete").
+- **Zoomable bucket bar:** the bucket thumbnails appear enlarged in the header, and when you hover over them they magnify macOS-dock-style (the one closest to the cursor is the largest).
+- **Undo / Redo:** unlimited steps can be undone and redone.
+- **Folder-scoped session saving:** your decisions are saved to the browser's `localStorage`, separately per folder; next time you can resume where you left off.
+- **Real sorting:** the "Sort" button moves the files into subfolders with collision handling.
 
-## Böngésző-követelmény
+## Browser requirement
 
-- **Csak Chromium-alapú böngésző** (Chrome / Edge) — a File System Access API miatt. Firefox / Safari nem támogatott.
-- **Biztonságos kontextus kell:** az API csak `https`-en vagy `localhost`-on él. A `dist/index.html` dupla-kattintással (`file://`) **nem** fog működni — futtasd helyi szerverről (`npm run dev` vagy `npm run preview`), illetve élesben `https`-host alól.
-- A mappa kiválasztásakor a böngésző **írási engedélyt** kér — ezt meg kell adni, mert az app valódi fájlokat mozgat.
+- **Chromium-based browsers only** (Chrome / Edge) — because of the File System Access API. Firefox / Safari are not supported.
+- **A secure context is required:** the API only works over `https` or on `localhost`. Double-clicking `dist/index.html` (`file://`) will **not** work — run it from a local server (`npm run dev` or `npm run preview`), or in production from an `https` host.
+- When you pick a folder, the browser asks for **write permission** — you must grant it, because the app moves real files.
 
-## Telepítés és futtatás
-
-```bash
-npm install        # függőségek telepítése
-npm run dev        # fejlesztői szerver (Vite) → http://localhost:5173
-```
-
-Éles build helyi kipróbálása:
+## Install and run
 
 ```bash
-npm run preview    # automatikusan buildel, majd a dist/-et szolgálja ki localhost-ról (secure context)
+npm install        # install dependencies
+npm run dev        # development server (Vite) → http://localhost:5173
 ```
 
-## Használat
+Trying a production build locally:
 
-1. Indításkor egyetlen képernyő: **„Mappa kiválasztása"**. Kattints rá, és válassz egy mappát (adj írási engedélyt).
-2. Az app beolvassa a mappa megjeleníthető képeit/videóit (almappákat kihagyja), és `lastModified` szerint **növekvő** sorrendben feldobja őket.
-3. Billentyűkkel kosarazol (lásd lent). A kosarak a képernyő tetején sorakoznak (név + bélyegkép + darabszám; a „törlés" kosár pirossal elkülönül).
-4. A pakli végén megjelenik a **„Kész"** képernyő a nagy **„Rendezés"** gombbal. A Rendezés a fejlécből **bármikor** korábban is elindítható.
-5. A Rendezés után megjelenik az eredmény (pl. „3 kép áthelyezve, 1 törölve"), innen visszatérhetsz a mappaválasztóhoz.
+```bash
+npm run preview    # builds automatically, then serves dist/ from localhost (secure context)
+```
 
-Ha ugyanazt a mappát választod, amelyhez van mentett munkamenet, a mappaválasztó **felajánlja a folytatást** (Folytatás / Újrakezdés).
+## Usage
 
-## Billentyűk
+1. On startup there's a single screen: **"Choose folder"**. Click it and pick a folder (grant write permission).
+2. The app reads the folder's displayable images/videos (skipping subfolders) and deals them out in **ascending** order by `lastModified`.
+3. You bucket them with the keyboard (see below). The buckets line up at the top of the screen (name + thumbnail + count; the "delete" bucket stands out in red).
+4. At the end of the deck the **"Done"** screen appears with the large **"Sort"** button. Sorting can also be started earlier from the header at **any time**.
+5. After sorting, the result is shown (e.g. "3 images moved, 1 deleted"), from where you can return to the folder picker.
 
-| Billentyű | Művelet |
-|---|---|
-| **Betű (`a`–`z`) vagy szám (`0`–`9`)** | A kép a billentyű nevével azonos kosárba kerül (létrejön, ha kell). Kis-/nagybetű mindegy. |
-| **Jobbra nyíl (→)** | A kép **marad a helyén** (nem kerül kosárba, a rendezéskor sem mozdul). |
-| **Balra nyíl (←)** | A kép a **„törlés"** kosárba kerül. |
-| **`Space`** | A fent lévő videó lejátszása / szüneteltetése. |
-| **`Ctrl+Z`** vagy **lefelé nyíl (↓)** | Undo (visszavonás). |
-| **`Ctrl+Y`**, **`Ctrl+Shift+Z`** vagy **felfelé nyíl (↑)** | Redo (újra). |
-| **`Esc`** | Az aktuális animáció megszakítása. |
+If you pick the same folder that has a saved session, the folder picker **offers to resume** (Resume / Start over).
 
-> Az érvénytelen fájlnév-karakterek (`/ \ : * ? < > |` stb.) és minden más billentyű **nem csinál semmit** — így sosem keletkezik érvénytelen nevű kosár. A **Rendezésnek nincs** billentyű-gyorsindítása (hogy véletlen lenyomás ne mozgasson fájlokat).
+## Keys
 
-## Hogyan rendez (fájlműveletek)
+| Key                                                  | Action                                                                                     |
+| ---------------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| **Letter (`a`–`z`) or number (`0`–`9`)**             | The image goes into the bucket named after the key (created if needed). Case-insensitive.  |
+| **Right arrow (→)**                                  | The image **stays in place** (not put into a bucket, and not moved during sorting either). |
+| **Left arrow (←)**                                   | The image goes into the **"delete"** bucket.                                               |
+| **`Space`**                                          | Play / pause the video on top.                                                             |
+| **`Ctrl+Z`** or **down arrow (↓)**                   | Undo.                                                                                      |
+| **`Ctrl+Y`**, **`Ctrl+Shift+Z`** or **up arrow (↑)** | Redo.                                                                                      |
+| **`Esc`**                                            | Cancel the current animation.                                                              |
 
-A „Rendezés" gomb a kiválasztott mappán belül:
+> Invalid filename characters (`/ \ : * ? < > |` etc.) and every other key **do nothing** — so a bucket with an invalid name is never created. **Sorting has no** keyboard shortcut (so an accidental keypress can't move files).
 
-- **Minden nem-„törlés" kosárhoz** létrehoz egy almappát a kosár nevével (`a/`, `1/`, …), és átmozgatja bele a képeit.
-- A **„törlés" kosár** képeit egy **`_torolt`** nevű almappába mozgatja (innen manuálisan törölheted — nem az OS kukájába kerül). A `_torolt` mappa több rendezésen át **egyetlen gyűjtőmappa** marad (újrahasználja).
-- A **jobbra nyíllal megtartott** és a **még be nem sorolt** képek **a helyükön maradnak**.
-- **Mappa-ütközés (sorszámozás):** ha egy kosár nevű almappa **már létezik**, a Rendezés nem írja felül és nem is olvasztja össze, hanem egy friss, **`_NN` sorszámozott testvért** hoz létre (`b/` foglalt → `b_01/`; ha `b/` és `b_01/` is van → `b_02/`). Így minden rendezés külön mappába kerül. (A `_torolt` kivétel — az mindig ugyanaz a mappa.)
-- **Fájlnév-ütközés:** ha egy fájlnév ütközik a célmappában, sorszámoz (`kep.jpg` → `kep (1).jpg`).
-- A mozgatás **biztonságos** (előbb másol/ír, csak utána törli az eredetit); egy fájl hibája nem állítja le a többit, a végén jelzi a sikertelenek számát.
+## How it sorts (file operations)
 
-## Munkamenet-mentés
+Inside the selected folder, the "Sort" button:
 
-- Minden döntésnél mentődik a kosár-állapot, a döntések, az undo/redo előzmény és a pozíció — **mappánként külön** kulcson (`picsort:v1:session:<mappanév>`).
-- **A képtartalom soha nem mentődik**, csak a fájlnevekhez kötött döntések. A visszatöltés fájlnév alapján párosít.
-- Ha egy fájlt időközben átneveztek/töröltek, a hozzá tartozó döntés elveszik; új fájlok besorolatlanként jelennek meg.
-- A **sikeres Rendezés** és az **Újrakezdés (Reset)** törli az adott mappa mentett munkamenetét.
+- **For every non-"delete" bucket**, creates a subfolder named after the bucket (`a/`, `1/`, …) and moves its images into it.
+- Moves the images in the **"delete" bucket** into a subfolder named **`_deleted`** (from which you can delete them manually — they do not go to the OS trash). The `_deleted` folder stays a **single collector folder** across multiple sorts (it is reused).
+- Images **kept with the right arrow** and **not yet classified** ones **stay in place**.
+- **Folder collision (numbering):** if a subfolder with the bucket's name **already exists**, Sort neither overwrites nor merges it, but creates a fresh, **`_NN`-numbered sibling** (`b/` taken → `b_01/`; if both `b/` and `b_01/` exist → `b_02/`). This way each sort goes into a separate folder. (`_deleted` is the exception — it is always the same folder.)
+- **Filename collision:** if a filename clashes in the target folder, it is numbered (`kep.jpg` → `kep (1).jpg`).
+- The move is **safe** (it copies/writes first, and only then deletes the original); an error on one file does not stop the rest, and the number of failures is reported at the end.
 
-> Megjegyzés: a mappa azonosítása a **neve** alapján történik (a böngésző biztonsági okból nem ad stabil teljes elérési utat). Két azonos nevű, de fizikailag különböző mappa ugyanazt a munkamenet-ágat használhatja; a fájlnév-párosítás ezt tovább szűri.
+## Session saving
 
-## npm scriptek
+- On every decision, the bucket state, the decisions, the undo/redo history and the position are saved — under a **separate key per folder** (`swipick:v1:session:<folder-name>`).
+- **The image content is never saved**, only the decisions tied to filenames. Restoring matches by filename.
+- If a file was renamed/deleted in the meantime, its associated decision is lost; new files show up as unclassified.
+- A **successful Sort** and **Start over (Reset)** clear the given folder's saved session.
 
-| Script | Mit csinál |
-|---|---|
-| `npm run dev` | Előbb `tsc --noEmit` típusellenőrzés, majd Vite fejlesztői szerver HMR-rel (`http://localhost:5173`). Típushiba esetén a szerver el sem indul. |
-| `npm run build` | `tsc --noEmit` típusellenőrzés **és** production build a `dist/`-be (relatív útvonalakkal). |
-| `npm run preview` | Előbb lefuttatja a buildet (`vite build`), majd kiszolgálja a `dist/`-et helyi szerverről (a File System Access API-hoz kellő secure context) — nem kell külön emlékezni a buildre. |
-| `npm test` | A teljes Vitest teszt-suite egyszeri lefuttatása. |
-| `npm run test:watch` | Vitest watch módban. |
-| `npm run typecheck` | Csak típusellenőrzés (`tsc --noEmit`). |
+> Note: the folder is identified by its **name** (for security reasons the browser does not provide a stable full path). Two folders with the same name but physically different could share the same session branch; filename matching filters this further.
 
-## Architektúra
+## npm scripts
 
-Réteges, egyirányú adatfolyam — **tiszta domain → Zustand store → React komponensek**; az I/O (FS, localStorage) dependency-injection mögött, így tesztelhető.
+| Script               | What it does                                                                                                                                                                       |
+| -------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `npm run dev`        | First `tsc --noEmit` type checking, then the Vite development server with HMR (`http://localhost:5173`). On a type error the server won't even start.                              |
+| `npm run build`      | `tsc --noEmit` type checking **and** a production build into `dist/` (with relative paths).                                                                                        |
+| `npm run preview`    | First runs the build (`vite build`), then serves `dist/` from a local server (the secure context needed for the File System Access API) — no need to remember to build separately. |
+| `npm test`           | A single run of the full Vitest test suite.                                                                                                                                        |
+| `npm run test:watch` | Vitest in watch mode.                                                                                                                                                              |
+| `npm run typecheck`  | Type checking only (`tsc --noEmit`).                                                                                                                                               |
+
+## Architecture
+
+Layered, one-way data flow — **pure domain → Zustand store → React components**; I/O (FS, localStorage) is behind dependency injection, so it's testable.
 
 ```
 src/
-  domain/      types.ts (kanonikus modell), keymap, reducer (undo/redo), buckets, ordering — tiszta, I/O-mentes
-  fs/          gateway (File System Access wrap), scan (mappaolvasás+szűrés), organize (fájlmozgatás+ütközés)
+  domain/      types.ts (canonical model), keymap, reducer (undo/redo), buckets, ordering — pure, I/O-free
+  fs/          gateway (File System Access wrap), scan (folder read + filter), organize (file move + collision)
   store/       useSortStore (Zustand), persist (folder-scoped localStorage + reconcile)
   components/  FolderPicker, BasketBar, ProgressBadge, MediaCard, CardStack, ControlButtons, DoneScreen, ResultScreen
-  hooks/       useKeyboard (globális billentyűk), useMediaWindow (ablakos objectURL cache)
+  hooks/       useKeyboard (global keys), useMediaWindow (windowed objectURL cache)
   test/        fakeFs (in-memory File System Access fake), setup
 ```
 
 **Stack:** Vite · TypeScript · React 19 · Zustand 5 · Framer Motion · CSS Modules · Vitest + Testing Library.
 
-A részletes tervdokumentumok:
-- **Követelmény-spec:** [docs/keprendezo-specifikacio.md](docs/keprendezo-specifikacio.md)
-- **Design / architektúra:** [docs/superpowers/specs/2026-06-17-keprendezo-design.md](docs/superpowers/specs/2026-06-17-keprendezo-design.md)
-- **Implementációs terv:** [docs/superpowers/plans/2026-06-17-keprendezo-plan.md](docs/superpowers/plans/2026-06-17-keprendezo-plan.md)
+The detailed design documents:
+
+- **Requirements spec:** [docs/swipick-spec.md](docs/swipick-spec.md)
+- **Design / architecture:** [docs/superpowers/specs/2026-06-17-swipick-design.md](docs/superpowers/specs/2026-06-17-swipick-design.md)
+- **Implementation plan:** [docs/superpowers/plans/2026-06-17-swipick-plan.md](docs/superpowers/plans/2026-06-17-swipick-plan.md)

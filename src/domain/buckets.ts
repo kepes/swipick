@@ -1,7 +1,7 @@
-// Derivált kosarak a decisions-ből. NEM perzisztált forrás.
-// A members SORRENDJE = az items (queue) sorrendje → determinisztikus
-// besorolási sorrend és a thumbnail forrása (members[0]).
-// Lásd: docs/superpowers/specs/2026-06-17-keprendezo-design.md.
+// Derived buckets from decisions. NOT a persisted source.
+// The ORDER of members = the items (queue) order → deterministic
+// classification order and the source of the thumbnail (members[0]).
+// See: docs/superpowers/specs/2026-06-17-swipick-design.md.
 
 import { DELETE_BUCKET } from './types'
 import type { MediaItem, Decision, Bucket, BucketKey } from './types'

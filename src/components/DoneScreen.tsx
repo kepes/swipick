@@ -6,9 +6,9 @@ export function DoneScreen() {
 
   return (
     <div className={styles.container}>
-      <p className={styles.message}>Végignézted az összes elemet 🎉</p>
+      <p className={styles.message}>You've reviewed everything 🎉</p>
       <button className={styles.organizeBtn} onClick={() => runOrganize()}>
-        Rendezés
+        Sort
       </button>
     </div>
   )

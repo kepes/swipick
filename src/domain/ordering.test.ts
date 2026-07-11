@@ -13,17 +13,17 @@ function item(fileName: string, lastModified: number): MediaItem {
 }
 
 describe('sortItems', () => {
-  it('lastModified ASC szerint rendez', () => {
+  it('sorts by lastModified ASC', () => {
     const out = sortItems([item('c.jpg', 30), item('a.jpg', 10), item('b.jpg', 20)])
     expect(out.map((i) => i.fileName)).toEqual(['a.jpg', 'b.jpg', 'c.jpg'])
   })
 
-  it('egyenlő lastModified-nél fileName szerint tie-break (localeCompare)', () => {
+  it('tie-break by fileName on equal lastModified (localeCompare)', () => {
     const out = sortItems([item('banana.jpg', 5), item('apple.jpg', 5), item('cherry.jpg', 5)])
     expect(out.map((i) => i.fileName)).toEqual(['apple.jpg', 'banana.jpg', 'cherry.jpg'])
   })
 
-  it('vegyesen: elsődleges lastModified, másodlagos fileName', () => {
+  it('mixed: primary lastModified, secondary fileName', () => {
     const out = sortItems([
       item('z.jpg', 20),
       item('b.jpg', 10),
@@ -33,7 +33,7 @@ describe('sortItems', () => {
     expect(out.map((i) => i.fileName)).toEqual(['a.jpg', 'b.jpg', 'y.jpg', 'z.jpg'])
   })
 
-  it('nem mutálja a bemenetet (másolaton rendez)', () => {
+  it('does not mutate the input (sorts on a copy)', () => {
     const input = [item('c.jpg', 30), item('a.jpg', 10)]
     const snapshot = input.map((i) => i.fileName)
     const out = sortItems(input)
@@ -41,11 +41,11 @@ describe('sortItems', () => {
     expect(out).not.toBe(input)
   })
 
-  it('üres tömbre üres tömböt ad', () => {
+  it('returns an empty array for an empty array', () => {
     expect(sortItems([])).toEqual([])
   })
 
-  it('stabil tie-break: azonos lastModified ÉS név esetén az elemek megmaradnak', () => {
+  it('stable tie-break: elements are preserved when lastModified AND name are equal', () => {
     const a = item('same.jpg', 5)
     const b = item('same.jpg', 5)
     const out = sortItems([a, b])

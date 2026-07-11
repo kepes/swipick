@@ -16,8 +16,8 @@ describe('ResultScreen', () => {
 
   it('shows moved and deleted counts', () => {
     render(<ResultScreen />)
-    expect(screen.getByText(/5 kép áthelyezve/)).toBeInTheDocument()
-    expect(screen.getByText(/2 törölve/)).toBeInTheDocument()
+    expect(screen.getByText(/5 images moved/)).toBeInTheDocument()
+    expect(screen.getByText(/2 deleted/)).toBeInTheDocument()
   })
 
   it('shows failed count and list when failures exist', () => {
@@ -26,22 +26,22 @@ describe('ResultScreen', () => {
         sortResult: {
           moved: 3,
           deleted: 1,
-          failed: [{ name: 'foto.jpg', bucket: 'a', error: 'Írási hiba' }],
+          failed: [{ name: 'foto.jpg', bucket: 'a', error: 'Write error' }],
         },
       } as Parameters<typeof useSortStore.setState>[0],
       false
     )
     render(<ResultScreen />)
-    expect(screen.getByText(/1 sikertelen/)).toBeInTheDocument()
+    expect(screen.getByText(/1 failed/)).toBeInTheDocument()
     expect(screen.getByText('foto.jpg')).toBeInTheDocument()
-    expect(screen.getByText(/Írási hiba/)).toBeInTheDocument()
+    expect(screen.getByText(/Write error/)).toBeInTheDocument()
   })
 
   it('calls backToPicker on button click', () => {
     const backToPicker = vi.fn()
     useSortStore.setState({ backToPicker })
     render(<ResultScreen />)
-    fireEvent.click(screen.getByRole('button', { name: /vissza a mappaválasztóhoz/i }))
+    fireEvent.click(screen.getByRole('button', { name: /back to folder picker/i }))
     expect(backToPicker).toHaveBeenCalled()
   })
 })

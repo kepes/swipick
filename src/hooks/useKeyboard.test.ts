@@ -26,14 +26,14 @@ function press(init: KeyboardEventInit) {
 }
 
 describe('useKeyboard', () => {
-  it('csak sorting képernyőn dispatchol', () => {
+  it('only dispatches on the sorting screen', () => {
     useSortStore.setState({ screen: 'picker', items: fakeItems(3) })
     renderHook(() => useKeyboard())
     press({ key: 'a' })
-    expect(useSortStore.getState().position).toBe(0) // picker → nincs hatás
+    expect(useSortStore.getState().position).toBe(0) // picker → no effect
   })
 
-  it("sorting alatt 'a' kosaraz és lépteti a pozíciót", () => {
+  it("'a' buckets and advances the position during sorting", () => {
     useSortStore.setState({ screen: 'sorting', folderName: 'T', items: fakeItems(3) })
     renderHook(() => useKeyboard())
     press({ key: 'a' })
@@ -41,16 +41,16 @@ describe('useKeyboard', () => {
     expect(useSortStore.getState().decisions['f0.jpg']).toEqual({ fileName: 'f0.jpg', bucket: 'a' })
   })
 
-  it('Space → videó toggle nonce nő, és preventDefault', () => {
+  it('Space → video toggle nonce increases, and preventDefault', () => {
     useSortStore.setState({ screen: 'sorting', folderName: 'T', items: fakeItems(3) })
     renderHook(() => useKeyboard())
     const before = useSortStore.getState().videoToggleNonce
     press({ key: ' ' })
     expect(useSortStore.getState().videoToggleNonce).toBe(before + 1)
-    expect(useSortStore.getState().position).toBe(0) // Space nem léptet
+    expect(useSortStore.getState().position).toBe(0) // Space doesn't advance
   })
 
-  it('Ctrl+Z → undo a store-on át', () => {
+  it('Ctrl+Z → undo via the store', () => {
     useSortStore.setState({ screen: 'sorting', folderName: 'T', items: fakeItems(3) })
     renderHook(() => useKeyboard())
     press({ key: 'a' })

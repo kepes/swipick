@@ -1,8 +1,8 @@
 import type { MediaItem } from './types'
 
 /**
- * Rendezés: lastModified ASC, egyenlőségnél fileName szerinti tie-break
- * (localeCompare). Nem mutálja a bemenetet — másolaton rendez.
+ * Sort: lastModified ASC, with a fileName tie-break on equality
+ * (localeCompare). Does not mutate the input — sorts on a copy.
  */
 export function sortItems(items: MediaItem[]): MediaItem[] {
   return [...items].sort((a, b) => {

@@ -3,61 +3,61 @@ import { makeFakeDir, FakeDirectoryHandle, FakeFileHandle } from '../test/fakeFs
 import { DELETE_BUCKET, TRASH_DIR, type SortPlan } from '../domain/types'
 import { resolveCollisionName, ensureBucketDir, moveFile, runSort } from './organize'
 
-// A fakeFs handle-jei nem a valódi FS Access típusok; a típus-ütközéseket
-// a teszt-szintű cast oldja fel (a runtime-felület kompatibilis).
+// The fakeFs handles are not the real FS Access types; the type mismatches
+// are resolved by test-level casts (the runtime surface is compatible).
 const asDir = (d: FakeDirectoryHandle) => d as unknown as FileSystemDirectoryHandle
 const asFile = (h: FakeFileHandle) => h as unknown as FileSystemFileHandle
 
 describe('resolveCollisionName', () => {
-  it('szabad név → változatlanul visszaadja', async () => {
+  it('free name → returns it unchanged', async () => {
     const dir = makeFakeDir('dest', [])
     expect(await resolveCollisionName(asDir(dir), 'kep.jpg')).toBe('kep.jpg')
   })
 
-  it('foglalt név → base (1).ext', async () => {
+  it('taken name → base (1).ext', async () => {
     const dir = makeFakeDir('dest', [{ name: 'kep.jpg' }])
     expect(await resolveCollisionName(asDir(dir), 'kep.jpg')).toBe('kep (1).jpg')
   })
 
-  it('kétszer foglalt → base (2).ext', async () => {
+  it('taken twice → base (2).ext', async () => {
     const dir = makeFakeDir('dest', [{ name: 'kep.jpg' }, { name: 'kep (1).jpg' }])
     expect(await resolveCollisionName(asDir(dir), 'kep.jpg')).toBe('kep (2).jpg')
   })
 
-  it('kiterjesztés nélküli ütközés → name (1)', async () => {
+  it('collision without extension → name (1)', async () => {
     const dir = makeFakeDir('dest', [{ name: 'README' }])
     expect(await resolveCollisionName(asDir(dir), 'README')).toBe('README (1)')
   })
 
-  it('vezető pont nem szeparátor → .env (1)', async () => {
+  it('leading dot is not a separator → .env (1)', async () => {
     const dir = makeFakeDir('dest', [{ name: '.env' }])
     expect(await resolveCollisionName(asDir(dir), '.env')).toBe('.env (1)')
   })
 })
 
 describe('ensureBucketDir', () => {
-  it('normal kosár → maga a bucketKey nevű mappa', async () => {
+  it('normal bucket → the folder named bucketKey itself', async () => {
     const root = makeFakeDir('root', [])
     const d = await ensureBucketDir(asDir(root), 'a')
     expect((d as unknown as FakeDirectoryHandle).name).toBe('a')
     expect(root.childNames()).toContain('a')
   })
 
-  it('delete kosár → TRASH_DIR nevű mappa', async () => {
+  it('delete bucket → folder named TRASH_DIR', async () => {
     const root = makeFakeDir('root', [])
     const d = await ensureBucketDir(asDir(root), DELETE_BUCKET)
     expect((d as unknown as FakeDirectoryHandle).name).toBe(TRASH_DIR)
     expect(root.childNames()).toContain(TRASH_DIR)
   })
 
-  it('delete kosár: meglévő _torolt mappát újrahasznál (nincs sorszám)', async () => {
+  it('delete bucket: reuses an existing _deleted folder (no number)', async () => {
     const root = makeFakeDir('root', [])
     root.addSubdir(TRASH_DIR)
     await ensureBucketDir(asDir(root), DELETE_BUCKET)
     expect(root.childNames().filter((n) => n.startsWith(TRASH_DIR))).toEqual([TRASH_DIR])
   })
 
-  it('normal kosár: létező mappa → friss _01 sorszámozott testvér, az eredeti érintetlen', async () => {
+  it('normal bucket: existing folder → fresh _01 numbered sibling, the original untouched', async () => {
     const root = makeFakeDir('root', [])
     root.addSubdir('b')
     const d = await ensureBucketDir(asDir(root), 'b')
@@ -65,7 +65,7 @@ describe('ensureBucketDir', () => {
     expect(root.childNames().sort()).toEqual(['b', 'b_01'])
   })
 
-  it('normal kosár: b és b_01 is létezik → b_02', async () => {
+  it('normal bucket: both b and b_01 exist → b_02', async () => {
     const root = makeFakeDir('root', [])
     root.addSubdir('b')
     root.addSubdir('b_01')
@@ -74,7 +74,7 @@ describe('ensureBucketDir', () => {
     expect(root.childNames().sort()).toEqual(['b', 'b_01', 'b_02'])
   })
 
-  it('normal kosár: sorszám kétjegyűre paddingol (b_09 után b_10)', async () => {
+  it('normal bucket: number pads to two digits (b_10 after b_09)', async () => {
     const root = makeFakeDir('root', [])
     root.addSubdir('b')
     for (let n = 1; n <= 9; n++) root.addSubdir(`b_0${n}`)
@@ -83,8 +83,8 @@ describe('ensureBucketDir', () => {
   })
 })
 
-describe('moveFile — natív move', () => {
-  it('ütközésmentes → finalName === name, dest-be kerül', async () => {
+describe('moveFile — native move', () => {
+  it('collision-free → finalName === name, lands in dest', async () => {
     const root = makeFakeDir('root', [{ name: 'kep.jpg' }], { supportsMove: true })
     const dest = root.addSubdir('a')
     const src = await root.getFileHandle('kep.jpg')
@@ -93,7 +93,7 @@ describe('moveFile — natív move', () => {
     expect(dest.childNames()).toContain('kep.jpg')
   })
 
-  it('ütközés → kollízió-feloldott névre megy', async () => {
+  it('collision → goes to a collision-resolved name', async () => {
     const root = makeFakeDir('root', [{ name: 'kep.jpg' }], { supportsMove: true })
     const dest = root.addSubdir('a')
     dest.addFiles([{ name: 'kep.jpg' }])
@@ -105,11 +105,11 @@ describe('moveFile — natív move', () => {
 })
 
 describe('moveFile — fallback (copy+delete)', () => {
-  it('a forrásfájl eltűnik a rootból, megjelenik a célmappában', async () => {
+  it('the source file disappears from root, appears in the destination folder', async () => {
     const root = makeFakeDir('root', [{ name: 'kep.jpg' }], { supportsMove: false })
     const dest = root.addSubdir('a')
     const src = await root.getFileHandle('kep.jpg')
-    // a fallback ágat ténylegesen járjuk: move nincs definiálva
+    // actually exercise the fallback branch: move is undefined
     expect((src as unknown as { move?: unknown }).move).toBeUndefined()
     const { finalName } = await moveFile(asFile(src), asDir(root), asDir(dest), 'kep.jpg')
     expect(finalName).toBe('kep.jpg')
@@ -119,7 +119,7 @@ describe('moveFile — fallback (copy+delete)', () => {
 })
 
 describe('runSort', () => {
-  it('delete + normal kosár — moved/deleted számok, mappák, progress', async () => {
+  it('delete + normal bucket — moved/deleted counts, folders, progress', async () => {
     const root = makeFakeDir(
       'root',
       [{ name: 'x.jpg' }, { name: 'y.jpg' }, { name: 'z.jpg' }],
@@ -143,7 +143,7 @@ describe('runSort', () => {
     expect(progress[progress.length - 1]).toBe(3) // done==total
   })
 
-  it('fallback mód — számok = plan handle-jeinek összege, fájlok átkerülnek', async () => {
+  it('fallback mode — counts = sum of plan handles, files are moved', async () => {
     const root = makeFakeDir(
       'root',
       [{ name: 'a1.jpg' }, { name: 'a2.jpg' }, { name: 'd1.jpg' }],
@@ -165,17 +165,17 @@ describe('runSort', () => {
     expect(root.peekDir(TRASH_DIR)!.childNames()).toEqual(['d1.jpg'])
   })
 
-  it('írási hiba → eredeti megmarad ÉS failed tartalmazza', async () => {
+  it('write error → original is preserved AND failed contains it', async () => {
     const root = makeFakeDir('root', [{ name: 'kep.jpg' }], { supportsMove: false })
     const src = await root.getFileHandle('kep.jpg')
 
-    // hibázó célmappa: getFileHandle createWritable-je dob
+    // failing destination folder: getFileHandle's createWritable throws
     const badDest = {
       name: 'a',
       async getFileHandle(name: string, opts?: { create?: boolean }) {
-        // kollízió-feloldáskor (create nélkül) a név szabad → NotFoundError
+        // during collision resolution (without create) the name is free → NotFoundError
         if (!opts?.create) throw new DOMException(`${name} not found`, 'NotFoundError')
-        // íráskor (create:true) a writable dob
+        // on write (create:true) the writable throws
         return {
           async createWritable(): Promise<never> {
             throw new Error('disk full')
@@ -183,9 +183,9 @@ describe('runSort', () => {
         }
       },
     }
-    // ensureBucketDir-t megkerüljük: a root.getDirectoryHandle a badDest-et adja.
-    // Létezés-próbára (create nélkül) NotFoundError → a célmappa neve szabad ('a');
-    // create:true-ra a badDest jön, aminek a writable-je dob.
+    // bypass ensureBucketDir: root.getDirectoryHandle returns badDest.
+    // On the existence check (without create) NotFoundError → the destination folder name is free ('a');
+    // on create:true, badDest comes back, whose writable throws.
     vi.spyOn(root, 'getDirectoryHandle').mockImplementation(
       async (name: string, opts?: { create?: boolean }) => {
         if (!opts?.create) throw new DOMException(`${name} not found`, 'NotFoundError')
@@ -201,7 +201,7 @@ describe('runSort', () => {
     expect(res.failed[0]!.name).toBe('kep.jpg')
     expect(res.failed[0]!.bucket).toBe('a')
     expect(res.failed[0]!.error).toContain('disk full')
-    // eredeti megmarad a rootban
+    // original is preserved in root
     expect(root.childNames()).toContain('kep.jpg')
   })
 })

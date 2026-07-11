@@ -70,8 +70,8 @@ function makeState(over: Partial<SortState> = {}): SortState {
 
 describe('storageKey', () => {
   it('different folders → different keys', () => {
-    expect(storageKey('A')).toBe('picsort:v1:session:A')
-    expect(storageKey('B')).toBe('picsort:v1:session:B')
+    expect(storageKey('A')).toBe('swipick:v1:session:A')
+    expect(storageKey('B')).toBe('swipick:v1:session:B')
     expect(storageKey('A')).not.toBe(storageKey('B'))
   })
 

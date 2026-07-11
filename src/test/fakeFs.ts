@@ -1,7 +1,7 @@
-// In-memory File System Access API fake teszthez.
-// Modellezi: FileSystemDirectoryHandle (values/getFileHandle/getDirectoryHandle/removeEntry),
-// FileSystemFileHandle (getFile/createWritable), és opcionálisan a natív move()-ot.
-// A valós FS Access API böngésző-only; jsdom nem implementálja.
+// In-memory File System Access API fake for tests.
+// Models: FileSystemDirectoryHandle (values/getFileHandle/getDirectoryHandle/removeEntry),
+// FileSystemFileHandle (getFile/createWritable), and optionally the native move().
+// The real FS Access API is browser-only; jsdom does not implement it.
 
 export interface FakeFileSpec {
   name: string
@@ -11,7 +11,7 @@ export interface FakeFileSpec {
 }
 
 let nameCounter = 0
-// Determinisztikus „egyedi" tartalom Date/Math.random nélkül.
+// Deterministic "unique" content without Date/Math.random.
 function freshContent(name: string): string {
   nameCounter += 1
   return `${name}#${nameCounter}`
@@ -22,12 +22,12 @@ export class FakeFileHandle {
   constructor(
     public name: string,
     private file: File,
-    /** ha false, a move() nincs definiálva (fallback copy+delete ágat teszteli) */
+    /** if false, move() is not defined (tests the fallback copy+delete branch) */
     supportsMove = true,
     private parent?: FakeDirectoryHandle,
   ) {
     if (supportsMove) {
-      // a natív gyors-út: a tartalmat a cél-dir handle-jébe teszi, eredetit törli
+      // the native fast path: puts the content into the target dir handle, deletes the original
       ;(this as unknown as { move: FakeFileHandle['_move'] }).move = this._move.bind(this)
     }
   }
@@ -51,8 +51,8 @@ export class FakeFileHandle {
     const oldName = this.name
     const oldParent = this.parent
     this.name = target
-    // FONTOS: előbb detach a régi szülőből, CSAK utána adopt — különben az
-    // _adopt által beállított új parent miatt a detach-feltétel sosem teljesülne.
+    // IMPORTANT: detach from the old parent first, adopt ONLY afterwards — otherwise the
+    // new parent set by _adopt would mean the detach condition is never met.
     if (oldParent && oldParent !== destDir) oldParent._detach(oldName)
     destDir._adopt(this)
   }
@@ -81,7 +81,7 @@ export class FakeDirectoryHandle {
     private supportsMove = true,
   ) {}
 
-  // ── felépítés tesztből ──
+  // ── construction from tests ──
   addFiles(specs: FakeFileSpec[]): this {
     for (const s of specs) {
       const content = s.content ?? freshContent(s.name)
@@ -103,7 +103,7 @@ export class FakeDirectoryHandle {
     return this
   }
 
-  // ── FS Access API felület ──
+  // ── FS Access API surface ──
   async *values(): AsyncIterableIterator<Entry> {
     for (const e of this.entries.values()) yield e
   }
@@ -144,7 +144,7 @@ export class FakeDirectoryHandle {
     return this.permission
   }
 
-  // ── belső, a move() használja ──
+  // ── internal, used by move() ──
   _adopt(handle: FakeFileHandle) {
     this.entries.set(handle.name, handle)
     handle.setParent(this)
@@ -153,11 +153,11 @@ export class FakeDirectoryHandle {
     this.entries.delete(name)
   }
 
-  /** teszt-segéd: a jelenlegi gyermek-nevek. */
+  /** test helper: the current child names. */
   childNames(): string[] {
     return [...this.entries.keys()]
   }
-  /** teszt-segéd: egy almappa lekérése (vagy undefined). */
+  /** test helper: get a subfolder (or undefined). */
   peekDir(name: string): FakeDirectoryHandle | undefined {
     const e = this.entries.get(name)
     return e?.kind === 'directory' ? e : undefined
@@ -168,7 +168,7 @@ function blobToFile(name: string, blob: Blob, lastModified: number): File {
   return new File([blob], name, { lastModified })
 }
 
-/** Kényelmi factory: gyökér-mappa fájlokkal. */
+/** Convenience factory: root folder with files. */
 export function makeFakeDir(
   name: string,
   files: FakeFileSpec[] = [],

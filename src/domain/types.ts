@@ -1,61 +1,61 @@
-// Kanonikus adatmodell — a teljes app közös referenciája.
-// Lásd: docs/superpowers/specs/2026-06-17-keprendezo-design.md (4. szakasz).
-// Stabil kulcs mindenhol: fileName (folder-scoped fájlnév, nem path, nincs külön id).
+// Canonical data model — the shared reference for the whole app.
+// See: docs/superpowers/specs/2026-06-17-swipick-design.md (section 4).
+// Stable key everywhere: fileName (folder-scoped file name, not a path, no separate id).
 
-/** Belső kosár-kulcs: 'a'..'z' | '0'..'9' | 'delete'. */
+/** Internal bucket key: 'a'..'z' | '0'..'9' | 'delete'. */
 export type BucketKey = string
 
-/** A „törlés" kosár belső azonosítója. */
+/** Internal identifier of the "delete" bucket. */
 export const DELETE_BUCKET: BucketKey = 'delete'
-/** A „törlés" kosár UI-felirata. */
-export const DELETE_DISPLAY = 'törlés'
-/** A „törlés" kosárhoz lemezre írt mappanév (spec 4.3). */
-export const TRASH_DIR = '_torolt'
+/** UI label of the "delete" bucket. */
+export const DELETE_DISPLAY = 'delete'
+/** Folder name written to disk for the "delete" bucket (spec 4.3). */
+export const TRASH_DIR = '_deleted'
 
 export type MediaKind = 'image' | 'video'
 
 export interface MediaItem {
-  /** Teljes fájlnév kiterjesztéssel — STABIL KULCS. */
+  /** Full file name with extension — STABLE KEY. */
   fileName: string
   kind: MediaKind
-  /** A File lazy (handle.getFile()); a handle kell a Rendezéshez. */
+  /** The File is lazy (handle.getFile()); the handle is needed for the Sort. */
   handle: FileSystemFileHandle
-  /** ms epoch — rendezési kulcs. */
+  /** ms epoch — sort key. */
   lastModified: number
   size: number
 }
 
-/** keep (jobbra nyíl) → NINCS Decision (besorolatlan == helyben marad). */
+/** keep (right arrow) → NO Decision (unclassified == stays in place). */
 export interface Decision {
   fileName: string
   bucket: BucketKey
 }
 
-/** Derivált, nem perzisztált forrásként. */
+/** Derived, not a persisted source. */
 export interface Bucket {
   key: BucketKey
   kind: 'normal' | 'delete'
-  /** fileName-ek besorolási sorrendben. */
+  /** fileNames in classification order. */
   members: string[]
-  /** === members[0] (derivált). */
+  /** === members[0] (derived). */
   thumbnail: string | null
 }
 
 /**
- * Egységes undo/redo bejegyzés. A keep IS bejegyzés (undo-zhatóság),
- * de nextBucket=null → a kosár-réteg ignorálja.
+ * Unified undo/redo entry. A keep IS an entry too (for undoability),
+ * but nextBucket=null → the bucket layer ignores it.
  */
 export interface HistoryEntry {
   fileName: string
-  /** A sorbeli pozíció, ahonnan a döntés történt. */
+  /** The queue position from which the decision was made. */
   position: number
-  /** Korábbi döntés (keep/besorolatlan = null). */
+  /** Previous decision (keep/unclassified = null). */
   prevBucket: BucketKey | null
-  /** Új döntés (keep = null). */
+  /** New decision (keep = null). */
   nextBucket: BucketKey | null
 }
 
-/** A billentyű-redukció bemenete (a KeyboardEvent releváns mezői). */
+/** Input of the key reduction (the relevant fields of KeyboardEvent). */
 export interface KeyEvent {
   key: string
   ctrlKey: boolean
@@ -64,7 +64,7 @@ export interface KeyEvent {
   altKey: boolean
 }
 
-/** A classifyKey kimenete — diszkriminált unió. */
+/** Output of classifyKey — discriminated union. */
 export type KeyAction =
   | { type: 'bucket'; bucketKey: BucketKey }
   | { type: 'delete' }
@@ -75,29 +75,29 @@ export type KeyAction =
   | { type: 'esc' }
   | { type: 'noop' }
 
-/** A döntés célja (placeCurrent bemenete). */
+/** The target of the decision (input of placeCurrent). */
 export type DecisionTarget =
   | { type: 'bucket'; bucketKey: BucketKey }
   | { type: 'delete' }
   | { type: 'keep' }
 
 /**
- * Runtime app-state (a Zustand store a tulajdonosa).
- * A buckets DERIVÁLT a decisions-ből (selectorral), nem itt tárolt forrás.
+ * Runtime app state (owned by the Zustand store).
+ * The buckets are DERIVED from decisions (via a selector), not a source stored here.
  */
 export interface SortState {
   folderName: string
   /** lastModified ASC, tie-break fileName. */
   items: MediaItem[]
-  /** === items.length → KÉSZ. */
+  /** === items.length → DONE. */
   position: number
   decisions: Record<string, Decision>
   history: HistoryEntry[]
-  /** redo lehetséges, ha historyCursor < history.length. */
+  /** redo is possible when historyCursor < history.length. */
   historyCursor: number
 }
 
-/** Perzisztált session (handle/objectURL/buckets SOHA). */
+/** Persisted session (handle/objectURL/buckets NEVER). */
 export interface PersistedSessionV1 {
   schemaVersion: 1
   folderName: string
@@ -108,7 +108,7 @@ export interface PersistedSessionV1 {
   position: number
 }
 
-// ── FS gateway (mockolható) ────────────────────────────────────────────────
+// ── FS gateway (mockable) ────────────────────────────────────────────────
 
 export interface FileSystemGateway {
   isSupported(): boolean
@@ -118,9 +118,9 @@ export interface FileSystemGateway {
 
 export interface ReadFolderResult {
   folderName: string
-  /** A kiválasztott mappa handle-je — a Rendezés (organize) ide ír. */
+  /** The handle of the selected folder — the Sort (organize) writes here. */
   dirHandle: FileSystemDirectoryHandle
-  /** lastModified ASC szerint rendezve. */
+  /** sorted by lastModified ASC. */
   items: MediaItem[]
   skippedCount: number
 }
@@ -131,9 +131,9 @@ export type FolderReadError =
   | { type: 'empty'; folderName: string }
   | { type: 'unsupported-browser' }
 
-// ── Rendezés (organize) ────────────────────────────────────────────────────
+// ── Sort (organize) ────────────────────────────────────────────────────
 
-/** A Rendezés bemenete (a store-ból derivált selector építi). */
+/** Input of the Sort (built by a selector derived from the store). */
 export type SortPlan = Map<BucketKey, FileSystemFileHandle[]>
 
 export interface MoveFailure {

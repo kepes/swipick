@@ -1,6 +1,6 @@
-// Valódi fájlmozgatás + ütközéskezelés a File System Access API-n.
-// A natív handle.move() gyors-utat használja, ha elérhető; egyébként
-// copy (write) → delete fallback, write→delete sorrendben (a forrás sosem vész el).
+// Real file moving + collision handling over the File System Access API.
+// Uses the native handle.move() fast path when available; otherwise
+// copy (write) → delete fallback, in write→delete order (the source is never lost).
 
 import {
   DELETE_BUCKET,
@@ -12,7 +12,7 @@ import {
   type SortProgress,
 } from '../domain/types'
 
-/** A name szétbontása base + ext-re. Vezető pont NEM szeparátor. */
+/** Splits name into base + ext. A leading dot is NOT a separator. */
 function splitExt(name: string): { base: string; ext: string } {
   const dot = name.lastIndexOf('.')
   if (dot <= 0) return { base: name, ext: '' }
@@ -24,8 +24,8 @@ function isNotFound(e: unknown): boolean {
 }
 
 /**
- * Szabad fájlnevet ad a destDir-ben. Ha a name szabad → name.
- * Ha foglalt → 'base (n).ext' n=1,2,… az első szabadig.
+ * Returns a free file name in destDir. If name is free → name.
+ * If taken → 'base (n).ext' n=1,2,… up to the first free one.
  */
 export async function resolveCollisionName(
   destDir: FileSystemDirectoryHandle,
@@ -49,7 +49,7 @@ export async function resolveCollisionName(
   }
 }
 
-/** Igaz, ha a root-ban már létezik adott nevű almappa. */
+/** True if a subfolder with the given name already exists in root. */
 async function dirExists(root: FileSystemDirectoryHandle, name: string): Promise<boolean> {
   try {
     await root.getDirectoryHandle(name)
@@ -61,8 +61,8 @@ async function dirExists(root: FileSystemDirectoryHandle, name: string): Promise
 }
 
 /**
- * Szabad mappanevet ad a normal kosárhoz. Ha a bucketKey nevű mappa szabad →
- * bucketKey. Ha foglalt → 'bucketKey_01', '_02', … (kétjegyű, az első szabadig).
+ * Returns a free folder name for a normal bucket. If the folder named bucketKey is free →
+ * bucketKey. If taken → 'bucketKey_01', '_02', … (two-digit, up to the first free one).
  */
 export async function resolveBucketDirName(
   root: FileSystemDirectoryHandle,
@@ -76,10 +76,10 @@ export async function resolveBucketDirName(
 }
 
 /**
- * A kosárhoz tartozó célmappa.
- * delete kosár → TRASH_DIR (meglévőt újrahasznál, egyetlen gyűjtőmappa).
- * normal kosár → bucketKey; ha az már létezik, friss _NN sorszámozott testvér
- * (B → B_01 → B_02 …), így minden rendezés külön mappába kerül.
+ * The destination folder for a bucket.
+ * delete bucket → TRASH_DIR (reuses an existing one, a single collector folder).
+ * normal bucket → bucketKey; if it already exists, a fresh _NN numbered sibling
+ * (B → B_01 → B_02 …), so each Sort goes into its own folder.
  */
 export async function ensureBucketDir(
   root: FileSystemDirectoryHandle,
@@ -97,8 +97,8 @@ interface MovableFileHandle extends FileSystemFileHandle {
 }
 
 /**
- * Egy fájl áthelyezése destDir-be, ütközés-feloldott névvel.
- * Natív move() ha van; egyébként write→delete fallback.
+ * Moves a single file into destDir, with a collision-resolved name.
+ * Native move() if available; otherwise write→delete fallback.
  */
 export async function moveFile(
   src: FileSystemFileHandle,
@@ -114,8 +114,8 @@ export async function moveFile(
     return { finalName }
   }
 
-  // Fallback: copy → delete. A sorrend garantálja, hogy hiba esetén
-  // a forrás megmarad.
+  // Fallback: copy → delete. The order guarantees that on error
+  // the source is preserved.
   const dest = await destDir.getFileHandle(finalName, { create: true })
   const writable = await dest.createWritable()
   const file = await src.getFile()
@@ -125,7 +125,7 @@ export async function moveFile(
   return { finalName }
 }
 
-/** A teljes SortPlan végrehajtása. Egy fájl hibája nem állítja le a többit. */
+/** Executes the entire SortPlan. One file's failure does not stop the rest. */
 export async function runSort(
   root: FileSystemDirectoryHandle,
   plan: SortPlan,

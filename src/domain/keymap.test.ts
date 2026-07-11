@@ -12,7 +12,7 @@ function ev(key: string, mods: Partial<Omit<KeyEvent, 'key'>> = {}): KeyEvent {
   }
 }
 
-describe('classifyKey — fenntartott kombók (precedencia)', () => {
+describe('classifyKey — reserved combos (precedence)', () => {
   it('Ctrl+Z → undo', () => {
     expect(classifyKey(ev('z', { ctrlKey: true }))).toEqual({ type: 'undo' })
   })
@@ -31,12 +31,12 @@ describe('classifyKey — fenntartott kombók (precedencia)', () => {
   it('Cmd+Y → redo', () => {
     expect(classifyKey(ev('y', { metaKey: true }))).toEqual({ type: 'redo' })
   })
-  it('nagy Z is megy undo-ra Ctrl-lal (case-insensitive)', () => {
+  it('uppercase Z also maps to undo with Ctrl (case-insensitive)', () => {
     expect(classifyKey(ev('Z', { ctrlKey: true }))).toEqual({ type: 'undo' })
   })
 })
 
-describe('classifyKey — speciális kulcsok', () => {
+describe('classifyKey — special keys', () => {
   it("Space (' ') → space", () => {
     expect(classifyKey(ev(' '))).toEqual({ type: 'space' })
   })
@@ -57,7 +57,7 @@ describe('classifyKey — speciális kulcsok', () => {
   })
 })
 
-describe('classifyKey — betű-kosarak', () => {
+describe('classifyKey — letter buckets', () => {
   it('a → bucket a', () => {
     expect(classifyKey(ev('a'))).toEqual({ type: 'bucket', bucketKey: 'a' })
   })
@@ -67,20 +67,20 @@ describe('classifyKey — betű-kosarak', () => {
   it('Shift+A → bucket a (Shift OK)', () => {
     expect(classifyKey(ev('A', { shiftKey: true }))).toEqual({ type: 'bucket', bucketKey: 'a' })
   })
-  it('z (Ctrl nélkül) → bucket z', () => {
+  it('z (without Ctrl) → bucket z', () => {
     expect(classifyKey(ev('z'))).toEqual({ type: 'bucket', bucketKey: 'z' })
   })
-  it('y (Ctrl nélkül) → bucket y', () => {
+  it('y (without Ctrl) → bucket y', () => {
     expect(classifyKey(ev('y'))).toEqual({ type: 'bucket', bucketKey: 'y' })
   })
-  it('minden a–z betű kosarat ad', () => {
+  it('every a–z letter yields a bucket', () => {
     for (const c of 'abcdefghijklmnopqrstuvwxyz') {
       expect(classifyKey(ev(c))).toEqual({ type: 'bucket', bucketKey: c })
     }
   })
 })
 
-describe('classifyKey — szám-kosarak', () => {
+describe('classifyKey — number buckets', () => {
   it('0..9 → bucket', () => {
     for (const c of '0123456789') {
       expect(classifyKey(ev(c))).toEqual({ type: 'bucket', bucketKey: c })
@@ -88,25 +88,25 @@ describe('classifyKey — szám-kosarak', () => {
   })
 })
 
-describe('classifyKey — modifier + betű → noop (kivéve z/y)', () => {
+describe('classifyKey — modifier + letter → noop (except z/y)', () => {
   it('Ctrl+A → noop', () => {
     expect(classifyKey(ev('a', { ctrlKey: true }))).toEqual({ type: 'noop' })
   })
   it('Cmd+A → noop', () => {
     expect(classifyKey(ev('a', { metaKey: true }))).toEqual({ type: 'noop' })
   })
-  it('Alt nélküli modellünkben Ctrl+B → noop', () => {
+  it('in our Alt-free model Ctrl+B → noop', () => {
     expect(classifyKey(ev('b', { ctrlKey: true }))).toEqual({ type: 'noop' })
   })
-  it('Alt+a → noop (Alt nem hoz létre kosarat)', () => {
+  it('Alt+a → noop (Alt does not create a bucket)', () => {
     expect(classifyKey(ev('a', { altKey: true }))).toEqual({ type: 'noop' })
   })
-  it('Ctrl+1 → noop (szám is)', () => {
+  it('Ctrl+1 → noop (numbers too)', () => {
     expect(classifyKey(ev('1', { ctrlKey: true }))).toEqual({ type: 'noop' })
   })
 })
 
-describe('classifyKey — noop esetek', () => {
+describe('classifyKey — noop cases', () => {
   const noopKeys = ['/', '\\', ':', '*', '?', '<', '>', '|', '.', 'Tab', 'Enter', 'F1']
   for (const k of noopKeys) {
     it(`'${k}' → noop`, () => {

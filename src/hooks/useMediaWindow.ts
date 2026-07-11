@@ -14,8 +14,8 @@ export function useMediaWindow(
   const behind = opts?.behind ?? 2
 
   const cacheRef = useRef<Map<string, string>>(new Map())
-  // A cache egy ref (revoke-bookkeeping miatt), de a ref-mutáció nem renderel újra.
-  // Ez a tick a URL-ek elkészülte után nő, hogy a kártya újrarendereljen a friss URL-lel.
+  // The cache is a ref (for revoke bookkeeping), but ref mutation doesn't re-render.
+  // This tick increases once the URLs are ready so the card re-renders with the fresh URL.
   const [, setTick] = useState(0)
 
   useEffect(() => {
@@ -45,7 +45,7 @@ export function useMediaWindow(
     })
     Promise.all(promises)
       .then((created) => {
-        // Csak akkor renderelünk újra, ha tényleg készült új URL.
+        // Only re-render if a new URL was actually created.
         if (created.some(Boolean)) setTick((t) => t + 1)
       })
       .catch(() => {})

@@ -37,7 +37,7 @@ describe('BasketBar', () => {
     expect(screen.getByText('2')).toBeInTheDocument()
 
     // delete bucket label and count
-    expect(screen.getByText('törlés')).toBeInTheDocument()
+    expect(screen.getByText('delete')).toBeInTheDocument()
     expect(screen.getByText('1')).toBeInTheDocument()
   })
 
@@ -50,7 +50,7 @@ describe('BasketBar', () => {
 
     render(<BasketBar />)
 
-    const label = screen.getByText('törlés')
+    const label = screen.getByText('delete')
     // closest chip div should have delete class
     const chip = label.closest('[class*="chip"]') as HTMLElement
     expect(chip.className).toMatch(/delete/)

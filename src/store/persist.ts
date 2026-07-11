@@ -1,6 +1,6 @@
-// Folder-scoped localStorage perzisztencia + reconcile.
-// A handle/objectURL/buckets SOHA nem perzisztált (lásd PersistedSessionV1).
-// Lásd: docs/superpowers/specs/2026-06-17-keprendezo-design.md.
+// Folder-scoped localStorage persistence + reconcile.
+// The handle/objectURL/buckets are NEVER persisted (see PersistedSessionV1).
+// See: docs/superpowers/specs/2026-06-17-swipick-design.md.
 
 import type {
   SortState,
@@ -11,7 +11,7 @@ import type {
 } from '../domain/types'
 
 export function storageKey(folderName: string): string {
-  return `picsort:v1:session:${folderName}`
+  return `swipick:v1:session:${folderName}`
 }
 
 export function toPersisted(
@@ -36,7 +36,7 @@ export function saveSession(state: SortState, savedAt = 0): void {
       JSON.stringify(toPersisted(state, savedAt)),
     )
   } catch (e) {
-    console.warn('picsort: saveSession failed', e)
+    console.warn('swipick: saveSession failed', e)
   }
 }
 
@@ -102,9 +102,9 @@ export function reconcile(
   let historyCursor = persisted.historyCursor - purgedBeforeCursor
   historyCursor = Math.max(0, Math.min(historyCursor, purgedHistory.length))
 
-  // 5. A purgedHistory már a currentSet-re szűrt, így a fileName mindig megtalálható;
-  // a `?? items.length` defenzív fallback egy esetleges invariáns-sérülésre (silent
-  // rossz-ugrás helyett a sor végére visz).
+  // 5. purgedHistory is already filtered to currentSet, so the fileName is always found;
+  // the `?? items.length` is a defensive fallback for a possible invariant violation
+  // (instead of a silent bad jump, it moves to the end of the queue).
   const history: HistoryEntry[] = purgedHistory.map((h) => ({
     ...h,
     position: nameToIndex.get(h.fileName) ?? items.length,

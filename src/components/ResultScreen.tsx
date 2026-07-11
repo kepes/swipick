@@ -8,17 +8,17 @@ export function ResultScreen() {
 
   const { moved, deleted, failed } = sortResult
 
-  const summaryParts = [`${moved} kép áthelyezve`, `${deleted} törölve`]
-  if (failed.length > 0) summaryParts.push(`${failed.length} sikertelen`)
+  const summaryParts = [`${moved} images moved`, `${deleted} deleted`]
+  if (failed.length > 0) summaryParts.push(`${failed.length} failed`)
 
   return (
     <div className={styles.container}>
-      <h1 className={styles.title}>✓ Kész!</h1>
+      <h1 className={styles.title}>✓ Done!</h1>
       <p className={styles.summary}>{summaryParts.join(', ')}</p>
 
       {failed.length > 0 && (
         <div className={styles.failedSection}>
-          <p className={styles.failedTitle}>Sikertelen fájlok:</p>
+          <p className={styles.failedTitle}>Failed files:</p>
           <ul className={styles.failedList}>
             {failed.map(f => (
               <li key={f.name} className={styles.failedItem}>
@@ -30,7 +30,7 @@ export function ResultScreen() {
       )}
 
       <button className={styles.button} onClick={() => useSortStore.getState().backToPicker()}>
-        Vissza a mappaválasztóhoz
+        Back to folder picker
       </button>
     </div>
   )

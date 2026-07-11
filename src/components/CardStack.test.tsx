@@ -57,6 +57,6 @@ describe('CardStack', () => {
     const items = [makeItem('cat.jpg')]
     useSortStore.setState({ items, position: 1 } as never)
     render(<CardStack />)
-    expect(screen.getByText(/Végignézted az összes elemet/)).toBeTruthy()
+    expect(screen.getByText(/You've reviewed everything/)).toBeTruthy()
   })
 })

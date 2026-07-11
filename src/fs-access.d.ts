@@ -1,4 +1,4 @@
-// A File System Access API nem-szabványos / újabb részei, amiket a lib.dom nem mindig fed.
+// Non-standard / newer parts of the File System Access API that lib.dom does not always cover.
 export {}
 
 declare global {
@@ -14,7 +14,7 @@ declare global {
   }
 
   interface FileSystemFileHandle {
-    /** Chromium-only natív áthelyezés; ha hiányzik, copy+delete fallback. */
+    /** Chromium-only native move; if missing, copy+delete fallback. */
     move?: (dest: FileSystemDirectoryHandle, newName?: string) => Promise<void>
   }
 }

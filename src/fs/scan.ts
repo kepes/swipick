@@ -10,8 +10,8 @@ export const IMAGE_EXT = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'avif', 'bmp', 's
 export const VIDEO_EXT = ['mp4', 'webm', 'ogg', 'ogv', 'mov']
 
 /**
- * Az utolsó '.' utáni szegmens lowercase alapján sorol. Vezető pont
- * (.gitignore) NEM kiterjesztés → null; pont nélküli név → null.
+ * Classifies by the lowercased segment after the last '.'. A leading dot
+ * (.gitignore) is NOT an extension → null; a name without a dot → null.
  */
 export function classifyByExtension(name: string): MediaKind | null {
   const dot = name.lastIndexOf('.')

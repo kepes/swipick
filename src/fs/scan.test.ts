@@ -28,13 +28,13 @@ async function expectReject(p: Promise<unknown>): Promise<FolderReadError> {
 }
 
 describe('classifyByExtension', () => {
-  it('képkiterjesztéseket image-ként ismer fel', () => {
+  it('recognizes image extensions as image', () => {
     for (const ext of ['jpg', 'jpeg', 'png', 'gif', 'webp', 'avif', 'bmp', 'svg', 'heic']) {
       expect(classifyByExtension(`foo.${ext}`)).toBe('image')
     }
   })
 
-  it('videókiterjesztéseket video-ként ismer fel', () => {
+  it('recognizes video extensions as video', () => {
     for (const ext of ['mp4', 'webm', 'ogg', 'ogv', 'mov']) {
       expect(classifyByExtension(`clip.${ext}`)).toBe('video')
     }
@@ -45,27 +45,27 @@ describe('classifyByExtension', () => {
     expect(classifyByExtension('Movie.MP4')).toBe('video')
   })
 
-  it('ismeretlen kiterjesztés → null', () => {
+  it('unknown extension → null', () => {
     expect(classifyByExtension('doc.pdf')).toBeNull()
     expect(classifyByExtension('archive.zip')).toBeNull()
   })
 
-  it('vezető pont (.gitignore) NEM kiterjesztés → null', () => {
+  it('leading dot (.gitignore) is NOT an extension → null', () => {
     expect(classifyByExtension('.gitignore')).toBeNull()
   })
 
-  it('pont nélküli név → null', () => {
+  it('name without a dot → null', () => {
     expect(classifyByExtension('README')).toBeNull()
   })
 
-  it('utolsó pont utáni szegmens dönt', () => {
+  it('the segment after the last dot decides', () => {
     expect(classifyByExtension('a.tar.png')).toBe('image')
     expect(classifyByExtension('a.png.txt')).toBeNull()
   })
 })
 
 describe('readFolder', () => {
-  it('vegyes mappa → csak támogatott média, skippedCount helyes', async () => {
+  it('mixed folder → only supported media, skippedCount correct', async () => {
     const dir = makeFakeDir('vakacio', [
       { name: 'a.jpg', lastModified: 30 },
       { name: 'b.png', lastModified: 10 },
@@ -79,11 +79,11 @@ describe('readFolder', () => {
     const res = await readFolder(gatewayFor(dir))
     expect(res.folderName).toBe('vakacio')
     expect(res.items.map((i) => i.fileName)).toEqual(['b.png', 'c.mp4', 'a.jpg'])
-    // 3 nem-média fájl + 1 almappa = 4 kihagyva
+    // 3 non-media files + 1 subfolder = 4 skipped
     expect(res.skippedCount).toBe(4)
   })
 
-  it('sorrend lastModified ASC, tie-break név', async () => {
+  it('order lastModified ASC, tie-break by name', async () => {
     const dir = makeFakeDir('f', [
       { name: 'z.jpg', lastModified: 20 },
       { name: 'b.jpg', lastModified: 10 },
@@ -93,7 +93,7 @@ describe('readFolder', () => {
     expect(res.items.map((i) => i.fileName)).toEqual(['a.jpg', 'b.jpg', 'z.jpg'])
   })
 
-  it('a MediaItem mezői helyesek (kind, lastModified, size, handle)', async () => {
+  it('the MediaItem fields are correct (kind, lastModified, size, handle)', async () => {
     const dir = makeFakeDir('f', [{ name: 'x.png', lastModified: 42, content: 'hello' }])
     const res = await readFolder(gatewayFor(dir))
     const it = res.items[0]
@@ -104,7 +104,7 @@ describe('readFolder', () => {
     expect(it.handle).toBeDefined()
   })
 
-  it('almappa sosem kerül az items-be', async () => {
+  it('a subfolder never ends up in items', async () => {
     const dir = makeFakeDir('f', [{ name: 'a.jpg', lastModified: 1 }])
     dir.addSubdir('nested')
     const res = await readFolder(gatewayFor(dir))
@@ -112,13 +112,13 @@ describe('readFolder', () => {
     expect(res.skippedCount).toBe(1)
   })
 
-  it('üres mappa → empty hiba folderName-mel', async () => {
+  it('empty folder → empty error with folderName', async () => {
     const dir = makeFakeDir('ures', [])
     const err = await expectReject(readFolder(gatewayFor(dir)))
     expect(err).toEqual({ type: 'empty', folderName: 'ures' })
   })
 
-  it('csupa-nem-média → empty', async () => {
+  it('all-non-media → empty', async () => {
     const dir = makeFakeDir('docs', [
       { name: 'a.txt' },
       { name: 'b.pdf' },

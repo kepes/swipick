@@ -43,7 +43,7 @@ function SortingView() {
           <div className={styles.overlayCard}>
             <div className={styles.spinner} />
             <p>
-              Rendezés folyamatban
+              Sorting in progress
               {progress ? ` — ${progress.done} / ${progress.total}` : '…'}
             </p>
           </div>

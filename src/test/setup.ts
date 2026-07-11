@@ -1,9 +1,9 @@
 import '@testing-library/jest-dom/vitest'
 import { beforeEach } from 'vitest'
 
-// A Node beépített (kísérleti, --localstorage-file nélkül működésképtelen) localStorage-a
-// árnyékolhatja a jsdom-ét. Determinisztikus in-memory Storage-ot teszünk a globálisra,
-// és minden teszt előtt ürítjük — így a perzisztencia-tesztek izoláltak.
+// Node's built-in localStorage (experimental, non-functional without --localstorage-file)
+// can shadow jsdom's. We put a deterministic in-memory Storage on the global,
+// and clear it before every test — so the persistence tests are isolated.
 class MemoryStorage implements Storage {
   private map = new Map<string, string>()
   get length() {
@@ -36,7 +36,7 @@ beforeEach(() => {
   memStorage.clear()
 })
 
-// jsdom nem implementál URL.createObjectURL / revokeObjectURL-t — stub a teszthez.
+// jsdom does not implement URL.createObjectURL / revokeObjectURL — stub for tests.
 if (typeof URL.createObjectURL !== 'function') {
   let n = 0
   Object.defineProperty(URL, 'createObjectURL', {

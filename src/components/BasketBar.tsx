@@ -12,8 +12,8 @@ import { DELETE_DISPLAY } from '../domain/types'
 import type { Bucket, MediaItem } from '../domain/types'
 import styles from './BasketBar.module.css'
 
-// Dock-nagyítás paraméterei: alap 56px (a korábbi 28px kétszerese), a kurzor
-// alatt eddig nő, a hatótáv pedig hány pixelnyire terjed ki két oldalra.
+// Dock magnification parameters: base 56px (twice the previous 28px), how far it
+// grows under the cursor, and how many pixels the range extends to each side.
 const BASE_SIZE = 56
 const PEAK_SIZE = 120
 const RANGE = 160
@@ -26,17 +26,17 @@ function BucketChip({
   mouseX: MotionValue<number>
 }) {
   const chipRef = useRef<HTMLDivElement | null>(null)
-  // A thumbnail blob-URL-je state-ben él → a src DEKLARATÍVAN kötődik, nem
-  // imperatív imgRef.current.src-vel. (motion.img ref-csatolása aszinkron lehet,
-  // ezért az imperatív megoldás resume-kor törött képet adott.)
+  // The thumbnail blob-URL lives in state → the src is bound DECLARATIVELY, not
+  // via imperative imgRef.current.src. (motion.img ref attachment can be async,
+  // so the imperative approach gave a broken image on resume.)
   const [thumbUrl, setThumbUrl] = useState<string | null>(null)
-  // A thumbnail elem típusa: videónál <video> kell, mert egy videó blob-URL-jét
-  // egy <img> nem tudja megjeleníteni (törött előnézet).
+  // The thumbnail element type: a video needs <video>, because an <img> cannot
+  // display a video blob-URL (broken preview).
   const [thumbKind, setThumbKind] = useState<MediaItem['kind']>('image')
 
   const items = useSortStore((s) => s.items)
 
-  // A chip középpontjának vízszintes távolsága a kurzortól → ebből jön a méret.
+  // The horizontal distance of the chip's center from the cursor → drives the size.
   const distance = useTransform(mouseX, (x) => {
     const rect = chipRef.current?.getBoundingClientRect()
     if (!rect) return RANGE + 1
@@ -111,7 +111,7 @@ export function BasketBar() {
   const items = useSortStore((s) => s.items)
   const decisions = useSortStore((s) => s.decisions)
 
-  // Közös kurzor-pozíció: minden chip ehhez méri a saját távolságát.
+  // Shared cursor position: every chip measures its own distance against this.
   const mouseX = useMotionValue(Number.POSITIVE_INFINITY)
 
   const bucketsMap = deriveBuckets(items, decisions)

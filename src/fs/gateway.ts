@@ -1,8 +1,8 @@
 import type { FileSystemGateway } from '../domain/types'
 
 /**
- * A valós File System Access API gateway (Chromium-only).
- * Tesztben mockolt FileSystemGateway-t adunk be helyette.
+ * The real File System Access API gateway (Chromium-only).
+ * In tests a mocked FileSystemGateway is injected instead.
  */
 export const realGateway: FileSystemGateway = {
   isSupported() {
@@ -21,7 +21,7 @@ export const realGateway: FileSystemGateway = {
     if (typeof dir.requestPermission === 'function') {
       return (await dir.requestPermission(opts)) === 'granted'
     }
-    // Ha a böngésző nem ad permission API-t, a pickerrel kapott handle már írható.
+    // If the browser exposes no permission API, the handle from the picker is already writable.
     return true
   },
 }

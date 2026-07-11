@@ -10,12 +10,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Show current filename above the control buttons during sorting
+- Establish English as the project's language policy (documented in CLAUDE.md)
 
 ### Changed
 
 - Number bucket folders when target directory already exists (e.g. `b/` → `b_01/` → `b_02/`); the trash bucket (`_torolt`) is still reused across sorts
 - Tinder view now fills the full viewport; header, footer, and progress badge overlay the image instead of stacking below it
 - Basket bar background is now transparent (removed elevated background and bottom border)
+- Translate the entire project to English (UI strings, code comments, tests, README, and docs); app name changed from "Képrendező" to "Swipick"
+- Rename Hungarian identifiers: the on-disk deleted-files folder `_torolt` to `_deleted`, the npm package name `keprendezo` to `swipick`, and the Hungarian-named docs to `swipick-*`
 
 ### Fixed
 

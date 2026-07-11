@@ -14,27 +14,27 @@ export function ControlButtons() {
         disabled={historyCursor === 0}
         onClick={() => useSortStore.getState().undo()}
       >
-        ◀ visszavon
+        ◀ Undo
       </button>
       <button
         className={styles.btn}
         disabled={historyCursor >= historyLength}
         onClick={() => useSortStore.getState().redo()}
       >
-        újra
+        Redo
       </button>
       <button
         className={`${styles.btn} ${styles.primary}`}
         disabled={isSorting}
         onClick={() => runOrganize()}
       >
-        Rendezés
+        Sort
       </button>
       <button
         className={`${styles.btn} ${styles.danger}`}
         onClick={() => useSortStore.getState().reset()}
       >
-        Újrakezdés
+        Start over
       </button>
     </div>
   )

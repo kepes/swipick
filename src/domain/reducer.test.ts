@@ -29,20 +29,20 @@ function key(k: string): KeyEvent {
   return { key: k, ctrlKey: false, shiftKey: false, metaKey: false, altKey: false }
 }
 
-describe('applyKey igazságtábla', () => {
-  it('a → bucket "a" a current fájlra, position++', () => {
+describe('applyKey truth table', () => {
+  it('a → bucket "a" for the current file, position++', () => {
     const s = applyKey(baseState(['1.jpg', '2.jpg']), key('a'))
     expect(s.decisions['1.jpg']).toEqual({ fileName: '1.jpg', bucket: 'a' })
     expect(s.position).toBe(1)
   })
 
-  it('ArrowLeft → delete kosár', () => {
+  it('ArrowLeft → delete bucket', () => {
     const s = applyKey(baseState(['1.jpg']), key('ArrowLeft'))
     expect(s.decisions['1.jpg']).toEqual({ fileName: '1.jpg', bucket: DELETE_BUCKET })
     expect(s.position).toBe(1)
   })
 
-  it('ArrowRight → keep (nincs decision), position++', () => {
+  it('ArrowRight → keep (no decision), position++', () => {
     const s = applyKey(baseState(['1.jpg']), key('ArrowRight'))
     expect(s.decisions['1.jpg']).toBeUndefined()
     expect(s.position).toBe(1)
@@ -50,21 +50,21 @@ describe('applyKey igazságtábla', () => {
     expect(s.history[0].nextBucket).toBeNull()
   })
 
-  it('position === items.length → bármely döntés no-op', () => {
+  it('position === items.length → any decision is a no-op', () => {
     const done: SortState = { ...baseState(['1.jpg']), position: 1 }
     expect(applyKey(done, key('a'))).toBe(done)
     expect(applyKey(done, key('ArrowLeft'))).toBe(done)
     expect(applyKey(done, key('ArrowRight'))).toBe(done)
   })
 
-  it('space / esc / noop → identitás', () => {
+  it('space / esc / noop → identity', () => {
     const s = baseState(['1.jpg'])
     expect(applyKey(s, key(' '))).toBe(s)
     expect(applyKey(s, key('Escape'))).toBe(s)
     expect(applyKey(s, key('F1'))).toBe(s)
   })
 
-  it('undo/redo billentyűkön át', () => {
+  it('undo/redo via keys', () => {
     let s = baseState(['1.jpg', '2.jpg'])
     s = applyKey(s, key('a'))
     const undone = applyKey(s, { key: 'z', ctrlKey: true, shiftKey: false, metaKey: false, altKey: false })
@@ -76,8 +76,8 @@ describe('applyKey igazságtábla', () => {
   })
 })
 
-describe('undo/redo lánc', () => {
-  it('3 besorolás → 2 undo → 1 redo → 1 új művelet → redo no-op', () => {
+describe('undo/redo chain', () => {
+  it('3 classifications → 2 undo → 1 redo → 1 new action → redo no-op', () => {
     let s = baseState(['1.jpg', '2.jpg', '3.jpg'])
     s = placeCurrent(s, { type: 'bucket', bucketKey: 'a' }) // 1.jpg -> a
     s = placeCurrent(s, { type: 'bucket', bucketKey: 'b' }) // 2.jpg -> b
@@ -98,21 +98,21 @@ describe('undo/redo lánc', () => {
     expect(s.historyCursor).toBe(2)
     expect(s.decisions['2.jpg']).toEqual({ fileName: '2.jpg', bucket: 'b' })
 
-    // 1 új művelet a 2. pozíción → levágja a redo-ágat (a régi 3.jpg->c bejegyzést)
+    // 1 new action at position 2 → truncates the redo branch (the old 3.jpg->c entry)
     s = placeCurrent(s, { type: 'bucket', bucketKey: 'z' }) // 3.jpg -> z
     expect(s.position).toBe(3)
     expect(s.historyCursor).toBe(s.history.length)
     expect(s.historyCursor).toBe(3)
     expect(s.decisions['3.jpg']).toEqual({ fileName: '3.jpg', bucket: 'z' })
 
-    // redo most már no-op
+    // redo is now a no-op
     const after = redo(s)
     expect(after).toBe(s)
   })
 })
 
-describe('kosár megjelenés/eltűnés deriveBuckets-en át', () => {
-  it('kosár utolsó elemének undo-ja → kosár eltűnik; redo → újra megjelenik', () => {
+describe('bucket appearance/disappearance via deriveBuckets', () => {
+  it("undoing a bucket's last member → bucket disappears; redo → reappears", () => {
     let s = baseState(['1.jpg'])
     s = placeCurrent(s, { type: 'bucket', bucketKey: 'a' })
     let buckets = deriveBuckets(s.items, s.decisions)
@@ -129,7 +129,7 @@ describe('kosár megjelenés/eltűnés deriveBuckets-en át', () => {
 })
 
 describe('keep undo', () => {
-  it('nem hoz létre/töröl kosarat, csak position lép vissza', () => {
+  it('does not create/remove a bucket, only position steps back', () => {
     let s = baseState(['1.jpg'])
     s = placeCurrent(s, { type: 'keep' })
     expect(s.position).toBe(1)
@@ -141,8 +141,8 @@ describe('keep undo', () => {
   })
 })
 
-describe('immutabilitás', () => {
-  it('placeCurrent nem mutálja az eredeti state-et', () => {
+describe('immutability', () => {
+  it('placeCurrent does not mutate the original state', () => {
     const s = baseState(['1.jpg', '2.jpg'])
     const next = placeCurrent(s, { type: 'bucket', bucketKey: 'a' })
     expect(s.position).toBe(0)
@@ -153,22 +153,22 @@ describe('immutabilitás', () => {
     expect(next.history).not.toBe(s.history)
   })
 
-  it('undo/redo nem mutálja a history tömböt (csak a kurzor mozog)', () => {
+  it('undo/redo does not mutate the history array (only the cursor moves)', () => {
     let s = baseState(['1.jpg', '2.jpg'])
     s = placeCurrent(s, { type: 'bucket', bucketKey: 'a' })
     s = placeCurrent(s, { type: 'bucket', bucketKey: 'b' })
     const histRef = s.history
     const u = undo(s)
-    expect(u.history).toBe(histRef) // ugyanaz a tömb, csak a kurzor mozog
+    expect(u.history).toBe(histRef) // same array, only the cursor moves
     expect(u.history).toHaveLength(2)
     const r = redo(u)
     expect(r.history).toBe(histRef)
   })
 
-  it('placeprevbucket átsorolás megőrzi a prevBucket-et a history-ban', () => {
+  it('placeprevbucket reclassification preserves prevBucket in the history', () => {
     let s = baseState(['1.jpg'])
     s = placeCurrent(s, { type: 'bucket', bucketKey: 'a' })
-    s = undo(s) // vissza pos 0, decision törölve
+    s = undo(s) // back to pos 0, decision removed
     s = placeCurrent(s, { type: 'bucket', bucketKey: 'b' })
     expect(s.history[s.historyCursor - 1].prevBucket).toBeNull()
     expect(s.history[s.historyCursor - 1].nextBucket).toBe('b')

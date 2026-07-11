@@ -34,35 +34,35 @@ const FILES = [
 ]
 
 describe('useSortStore — pickFolder', () => {
-  it('beolvas, sorting képernyőre lép', async () => {
-    const dir = makeFakeDir('Vakáció', FILES)
+  it('reads in, moves to the sorting screen', async () => {
+    const dir = makeFakeDir('Vacation', FILES)
     await useSortStore.getState().pickFolder(gatewayFor(dir))
     const s = useSortStore.getState()
     expect(s.screen).toBe('sorting')
     expect(s.items.map((i) => i.fileName)).toEqual(['a.jpg', 'b.jpg', 'c.png'])
-    expect(s.folderName).toBe('Vakáció')
+    expect(s.folderName).toBe('Vacation')
     expect(s.dirHandle).not.toBeNull()
   })
 
-  it('üres mappa → picker marad, hibaüzenettel', async () => {
-    const dir = makeFakeDir('Üres', [])
+  it('empty folder → stays on picker, with an error message', async () => {
+    const dir = makeFakeDir('Empty', [])
     await useSortStore.getState().pickFolder(gatewayFor(dir))
     const s = useSortStore.getState()
     expect(s.screen).toBe('picker')
-    expect(s.pickerError).toMatch(/nincs megjeleníthető/i)
+    expect(s.pickerError).toMatch(/no images or videos/i)
   })
 
-  it('nem támogatott böngésző → picker marad, üzenettel', async () => {
+  it('unsupported browser → stays on picker, with a message', async () => {
     const dir = makeFakeDir('X', FILES)
     await useSortStore.getState().pickFolder(gatewayFor(dir, { supported: false }))
     const s = useSortStore.getState()
     expect(s.screen).toBe('picker')
-    expect(s.pickerError).toMatch(/nem támogatott/i)
+    expect(s.pickerError).toMatch(/not supported/i)
   })
 })
 
-describe('useSortStore — billentyű-dispatch + perzisztencia', () => {
-  it('applyKeyEvent kosaraz, position lép, és ment localStorage-ba', async () => {
+describe('useSortStore — key dispatch + persistence', () => {
+  it('applyKeyEvent buckets, position advances, and saves to localStorage', async () => {
     const dir = makeFakeDir('M', FILES)
     await useSortStore.getState().pickFolder(gatewayFor(dir))
     const action = useSortStore.getState().applyKeyEvent(key('g'))
@@ -70,11 +70,11 @@ describe('useSortStore — billentyű-dispatch + perzisztencia', () => {
     const s = useSortStore.getState()
     expect(s.position).toBe(1)
     expect(s.decisions['a.jpg']).toEqual({ fileName: 'a.jpg', bucket: 'g' })
-    // perzisztálva
+    // persisted
     expect(localStorage.getItem(storageKey('M'))).not.toBeNull()
   })
 
-  it('undo/redo a store-on át', async () => {
+  it('undo/redo via the store', async () => {
     const dir = makeFakeDir('M', FILES)
     await useSortStore.getState().pickFolder(gatewayFor(dir))
     const st = useSortStore.getState()
@@ -89,7 +89,7 @@ describe('useSortStore — billentyű-dispatch + perzisztencia', () => {
     expect(useSortStore.getState().decisions['b.jpg']).toEqual({ fileName: 'b.jpg', bucket: 'delete' })
   })
 
-  it('space / esc / érvénytelen → domain nem változik', async () => {
+  it('space / esc / invalid → domain does not change', async () => {
     const dir = makeFakeDir('M', FILES)
     await useSortStore.getState().pickFolder(gatewayFor(dir))
     const before = useSortStore.getState().position
@@ -100,25 +100,25 @@ describe('useSortStore — billentyű-dispatch + perzisztencia', () => {
   })
 })
 
-describe('useSortStore — folder-scoped visszatöltés', () => {
-  it('ugyanazon mappa újraválasztva a pickeren felajánlja a folytatást, confirmResume visszatölt', async () => {
-    const dir = makeFakeDir('Nyár', FILES)
+describe('useSortStore — folder-scoped restore', () => {
+  it('reselecting the same folder offers to resume on the picker, confirmResume restores', async () => {
+    const dir = makeFakeDir('Summer', FILES)
     await useSortStore.getState().pickFolder(gatewayFor(dir))
     useSortStore.getState().applyKeyEvent(key('a')) // a.jpg → a
     useSortStore.getState().applyKeyEvent(key('a')) // b.jpg → a
 
-    // új munkamenet, ugyanaz a mappa
+    // new session, same folder
     useSortStore.setState(initial, true)
-    const dir2 = makeFakeDir('Nyár', FILES)
+    const dir2 = makeFakeDir('Summer', FILES)
     await useSortStore.getState().pickFolder(gatewayFor(dir2))
 
-    // a pickeren marad, resume-ajánlattal (spec 4.5)
+    // stays on the picker, with a resume offer (spec 4.5)
     const afterPick = useSortStore.getState()
     expect(afterPick.screen).toBe('picker')
     expect(afterPick.resumePrompt?.restoredCount).toBe(2)
-    expect(afterPick.resumePrompt?.folderName).toBe('Nyár')
+    expect(afterPick.resumePrompt?.folderName).toBe('Summer')
 
-    // Folytatás → visszatölt és belép a nézetbe
+    // Resume → restores and enters the view
     useSortStore.getState().confirmResume()
     const s = useSortStore.getState()
     expect(s.screen).toBe('sorting')
@@ -126,16 +126,16 @@ describe('useSortStore — folder-scoped visszatöltés', () => {
     expect(s.decisions['a.jpg']).toEqual({ fileName: 'a.jpg', bucket: 'a' })
     expect(s.decisions['b.jpg']).toEqual({ fileName: 'b.jpg', bucket: 'a' })
     expect(s.position).toBe(2)
-    expect(s.restoredNotice).toMatch(/visszatöltve/i)
+    expect(s.restoredNotice).toMatch(/restored/i)
   })
 
-  it('discardResume eldobja a mentést és friss munkamenettel indít', async () => {
-    const dir = makeFakeDir('Tél', FILES)
+  it('discardResume drops the save and starts a fresh session', async () => {
+    const dir = makeFakeDir('Winter', FILES)
     await useSortStore.getState().pickFolder(gatewayFor(dir))
     useSortStore.getState().applyKeyEvent(key('a'))
 
     useSortStore.setState(initial, true)
-    const dir2 = makeFakeDir('Tél', FILES)
+    const dir2 = makeFakeDir('Winter', FILES)
     await useSortStore.getState().pickFolder(gatewayFor(dir2))
     expect(useSortStore.getState().resumePrompt).not.toBeNull()
 
@@ -144,16 +144,16 @@ describe('useSortStore — folder-scoped visszatöltés', () => {
     expect(s.screen).toBe('sorting')
     expect(s.decisions).toEqual({})
     expect(s.position).toBe(0)
-    expect(localStorage.getItem(storageKey('Tél'))).toBeNull()
+    expect(localStorage.getItem(storageKey('Winter'))).toBeNull()
   })
 
-  it('másik mappa nem látja az előző munkamenetét', async () => {
-    const dir = makeFakeDir('Egyik', FILES)
+  it('another folder does not see the previous session', async () => {
+    const dir = makeFakeDir('One', FILES)
     await useSortStore.getState().pickFolder(gatewayFor(dir))
     useSortStore.getState().applyKeyEvent(key('a'))
 
     useSortStore.setState(initial, true)
-    const dir2 = makeFakeDir('Másik', FILES)
+    const dir2 = makeFakeDir('Other', FILES)
     await useSortStore.getState().pickFolder(gatewayFor(dir2))
     expect(useSortStore.getState().decisions).toEqual({})
     expect(useSortStore.getState().position).toBe(0)
@@ -161,7 +161,7 @@ describe('useSortStore — folder-scoped visszatöltés', () => {
 })
 
 describe('buildSortPlan', () => {
-  it('a delete + normal kosarakat adja, keep/besorolatlan kimarad', () => {
+  it('returns the delete + normal buckets, keep/unclassified is excluded', () => {
     const items: MediaItem[] = FILES.map((f) => ({
       fileName: f.name,
       kind: 'image',
@@ -172,7 +172,7 @@ describe('buildSortPlan', () => {
     const decisions: Record<string, Decision> = {
       'a.jpg': { fileName: 'a.jpg', bucket: 'x' },
       'b.jpg': { fileName: 'b.jpg', bucket: 'delete' },
-      // c.png: besorolatlan (keep) → kimarad
+      // c.png: unclassified (keep) → excluded
     }
     const plan = buildSortPlan(items, decisions)
     expect([...plan.keys()].sort()).toEqual(['delete', 'x'])
@@ -182,27 +182,27 @@ describe('buildSortPlan', () => {
 })
 
 describe('useSortStore — runOrganize + reset', () => {
-  it('runOrganize a kosarakat mappákba mozgatja, törli a munkamenetet, done képernyő', async () => {
-    const dir = makeFakeDir('Rend', FILES)
+  it('runOrganize moves the buckets into folders, clears the session, done screen', async () => {
+    const dir = makeFakeDir('Sorted', FILES)
     await useSortStore.getState().pickFolder(gatewayFor(dir))
     useSortStore.getState().applyKeyEvent(key('a')) // a.jpg → a/
-    useSortStore.getState().applyKeyEvent(key('ArrowLeft')) // b.jpg → _torolt/
-    // c.png besorolatlan → marad
+    useSortStore.getState().applyKeyEvent(key('ArrowLeft')) // b.jpg → _deleted/
+    // c.png unclassified → stays
 
     await useSortStore.getState().runOrganize()
     const s = useSortStore.getState()
     expect(s.screen).toBe('done')
     expect(s.sortResult).toEqual({ moved: 1, deleted: 1, failed: [] })
-    // mappák létrejöttek a fake dir-ben
+    // folders were created in the fake dir
     expect(dir.peekDir('a')).toBeDefined()
-    expect(dir.peekDir('_torolt')).toBeDefined()
-    // c.png a rootban maradt
+    expect(dir.peekDir('_deleted')).toBeDefined()
+    // c.png stayed in the root
     expect(dir.childNames()).toContain('c.png')
-    // munkamenet törölve
-    expect(localStorage.getItem(storageKey('Rend'))).toBeNull()
+    // session cleared
+    expect(localStorage.getItem(storageKey('Sorted'))).toBeNull()
   })
 
-  it('reset üríti az állapotot és a munkamenetet, vissza picker-re', async () => {
+  it('reset clears the state and the session, back to picker', async () => {
     const dir = makeFakeDir('R', FILES)
     await useSortStore.getState().pickFolder(gatewayFor(dir))
     useSortStore.getState().applyKeyEvent(key('a'))

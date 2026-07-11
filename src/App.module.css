@@ -5,7 +5,7 @@
   overflow: hidden;
 }
 
-/* A kép a teljes viewportot kitölti; a fejléc/lábléc rá-úszik (overlay). */
+/* The image fills the entire viewport; the header/footer float over it (overlay). */
 .main {
   position: absolute;
   inset: 0;

@@ -1,7 +1,7 @@
-// Tiszta, immutábilis SortState reducerek. A buckets DERIVÁLT (deriveBuckets),
-// nem a state mezője. A keep IS history-bejegyzés (undo-zhatóság), de
-// nextBucket=null → a kosár-réteg ignorálja.
-// Lásd: docs/superpowers/specs/2026-06-17-keprendezo-design.md.
+// Pure, immutable SortState reducers. The buckets are DERIVED (deriveBuckets),
+// not a state field. A keep IS a history entry too (for undoability), but
+// nextBucket=null → the bucket layer ignores it.
+// See: docs/superpowers/specs/2026-06-17-swipick-design.md.
 
 import { classifyKey } from './keymap'
 import { DELETE_BUCKET } from './types'
@@ -13,7 +13,7 @@ import type {
   KeyEvent,
 } from './types'
 
-/** decisions másolat, ahol fileName a megadott bucketbe kerül, vagy törlődik (null). */
+/** A copy of decisions where fileName goes into the given bucket, or is removed (null). */
 function withDecision(
   decisions: SortState['decisions'],
   fileName: string,
@@ -66,7 +66,7 @@ export function undo(state: SortState): SortState {
     decisions: withDecision(state.decisions, entry.fileName, entry.prevBucket),
     position: entry.position,
     historyCursor: state.historyCursor - 1,
-    // history tömb VÁLTOZATLAN — csak a kurzor mozog (redo-zhatóság).
+    // history array UNCHANGED — only the cursor moves (for redoability).
   }
 }
 
