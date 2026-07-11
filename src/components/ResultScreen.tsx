@@ -13,7 +13,8 @@ export function ResultScreen() {
 
   return (
     <div className={styles.container}>
-      <h1 className={styles.title}>✓ Done!</h1>
+      <div className={styles.badge} aria-hidden="true">✓</div>
+      <h1 className={styles.title}>Done!</h1>
       <p className={styles.summary}>{summaryParts.join(', ')}</p>
 
       {failed.length > 0 && (

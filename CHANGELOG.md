@@ -12,9 +12,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Show current filename above the control buttons during sorting
 - Establish English as the project's language policy (documented in CLAUDE.md)
 - Add UI design brief document for designer handover, describing the current UI screen by screen (`docs/ui-design-brief.md`)
+- Add a light/dark theme toggle
 
 ### Changed
 
+- Redesign the entire app with a new warm/coral "Playroom" visual language: chunky ink outlines, hard offset shadows, pressable keycap-style buttons, and Sora typography, applied across the sorting screen, start screen, done screen, and result screen
 - Number bucket folders when target directory already exists (e.g. `b/` → `b_01/` → `b_02/`); the trash bucket (`_torolt`) is still reused across sorts
 - Tinder view now fills the full viewport; header, footer, and progress badge overlay the image instead of stacking below it
 - Basket bar background is now transparent (removed elevated background and bottom border)

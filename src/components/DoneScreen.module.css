@@ -3,31 +3,36 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 2rem;
+  gap: var(--s-xxl);
   height: 100%;
-  padding: 2rem;
+  padding: var(--s-xxl);
 }
 
 .message {
-  font-size: 1.6rem;
-  font-weight: 600;
-  color: var(--text);
+  font-size: 1.75rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  color: var(--ink);
   text-align: center;
   margin: 0;
 }
 
+/* Large coral CTA — the deliberate Sort action, with an extra-thick press edge. */
 .organizeBtn {
-  padding: 1rem 2.5rem;
-  font-size: 1.25rem;
-  font-weight: 700;
-  background: var(--accent);
-  color: #fff;
-  border: none;
-  border-radius: var(--radius);
-  cursor: pointer;
-  transition: background 0.15s;
+  padding: 16px 44px;
+  font-size: 1.1875rem;
+  font-weight: 800;
+  background: var(--coral);
+  color: var(--on-coral);
+  border: var(--outline) solid var(--ink);
+  border-bottom-width: 7px;
+  border-radius: var(--r-md);
+  transition:
+    transform 0.06s ease,
+    border-bottom-width 0.06s ease;
 }
 
-.organizeBtn:hover {
-  background: var(--accent-hover);
+.organizeBtn:active:not(:disabled) {
+  transform: translateY(3px);
+  border-bottom-width: 4px;
 }

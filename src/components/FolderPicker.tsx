@@ -9,7 +9,9 @@ export function FolderPicker() {
 
   return (
     <div className={styles.container}>
-      <h1 className={styles.title}>Swipick</h1>
+      <h1 className={styles.title}>
+        Swipick<span className={styles.dot}>.</span>
+      </h1>
       <p className={styles.subtitle}>Pick a folder and sort your images with the keyboard.</p>
 
       {resume ? (
