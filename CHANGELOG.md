@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Show current filename above the control buttons during sorting
 - Establish English as the project's language policy (documented in CLAUDE.md)
+- Add UI design brief document for designer handover, describing the current UI screen by screen (`docs/ui-design-brief.md`)
 
 ### Changed
 
