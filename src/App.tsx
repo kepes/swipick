@@ -6,6 +6,7 @@ import { BasketBar } from './components/BasketBar'
 import { ProgressBadge } from './components/ProgressBadge'
 import { CardStack } from './components/CardStack'
 import { ControlButtons } from './components/ControlButtons'
+import { ThemeToggle } from './components/ThemeToggle'
 import styles from './App.module.css'
 
 function SortingView() {
@@ -38,14 +39,26 @@ function SortingView() {
 
       {restoredNotice && <div className={styles.notice}>{restoredNotice}</div>}
 
+      <ThemeToggle />
+
       {isSorting && (
         <div className={styles.overlay}>
           <div className={styles.overlayCard}>
             <div className={styles.spinner} />
-            <p>
+            <p className={styles.overlayText}>
               Sorting in progress
               {progress ? ` — ${progress.done} / ${progress.total}` : '…'}
             </p>
+            <div className={styles.progressTrack}>
+              <div
+                className={styles.progressFill}
+                style={{
+                  width: progress
+                    ? `${Math.round((progress.done / Math.max(progress.total, 1)) * 100)}%`
+                    : '35%',
+                }}
+              />
+            </div>
           </div>
         </div>
       )}

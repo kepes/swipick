@@ -1,19 +1,85 @@
+/*
+ * Playroom — a playful, keyboard-first visual language for Swipick.
+ * Chunky 2px ink outlines, hard offset shadows (no blur), pressable 3D
+ * buttons/keycaps, a single warm coral accent. Light + dark themes.
+ *
+ * Theming model:
+ *  - Light tokens live on :root (the default).
+ *  - Dark tokens apply either when the OS prefers dark AND the user hasn't
+ *    chosen a theme (:root:not([data-theme]) inside the media query) — this
+ *    avoids a flash before JS runs — OR when the user explicitly picks dark
+ *    (:root[data-theme='dark']). An explicit light choice always wins.
+ */
+
 :root {
-  --bg: #0f1115;
-  --bg-elev: #181b22;
-  --bg-card: #1f2430;
-  --surface-border: #2b313d;
-  --text: #e7e9ee;
-  --text-dim: #9aa3b2;
-  --accent: #6c8cff;
-  --accent-hover: #5577f5;
-  --danger: #ff5c6c;
-  --danger-dim: #4a2730;
-  --keep: #43c595;
-  --radius: 14px;
-  --radius-sm: 9px;
-  --shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
-  --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  /* Colors — light */
+  --ink: #1f1a14; /* primary: outlines, strong text, hard shadows */
+  --on-ink: #f4efe8; /* text on an ink fill */
+  --taupe: #8a7c6b; /* secondary text, counters, hints */
+  --coral: #ff6b3d; /* sole interaction accent */
+  --on-coral: #ffffff;
+  --neutral: #f4efe8; /* app background */
+  --surface: #fffdf9; /* cards, panels, chips, keycaps */
+  --error: #d63b1f;
+  --error-container: #ffe9e2;
+  --on-error-container: #d63b1f;
+  --success: #2f9e6e;
+
+  /* The dim scrim for blocking states — same in both themes. */
+  --dim: rgba(31, 26, 20, 0.55);
+
+  /* Typography */
+  --font: 'Sora', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: ui-monospace, Menlo, Monaco, 'Cascadia Code', monospace;
+
+  /* Radii */
+  --r-xs: 7px;
+  --r-sm: 13px;
+  --r-md: 17px;
+  --r-lg: 20px;
+  --r-xl: 24px;
+  --r-pill: 99px;
+
+  /* Spacing */
+  --s-xs: 6px;
+  --s-sm: 10px;
+  --s-md: 12px;
+  --s-lg: 16px;
+  --s-xl: 22px;
+  --s-xxl: 32px;
+
+  /* The chunky outline width and the hard (blur-free) offset shadow.
+     The shadow colour is always the ink role, so it flips with the theme. */
+  --outline: 2px;
+  --shadow-hard: 0 6px 0 var(--ink);
+  --shadow-hard-lg: 0 8px 0 var(--ink);
+}
+
+/* Dark theme — applied before JS runs when the OS prefers dark and the user
+   hasn't overridden it. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    --ink: #f4efe8;
+    --on-ink: #171310;
+    --taupe: #9a8d7c;
+    --neutral: #171310;
+    --surface: #262019;
+    --error: #ff7d5e;
+    --error-container: #301a13;
+    --on-error-container: #ff7d5e;
+  }
+}
+
+/* Explicit user choice — always wins over the OS preference. */
+:root[data-theme='dark'] {
+  --ink: #f4efe8;
+  --on-ink: #171310;
+  --taupe: #9a8d7c;
+  --neutral: #171310;
+  --surface: #262019;
+  --error: #ff7d5e;
+  --error-container: #301a13;
+  --on-error-container: #ff7d5e;
 }
 
 * {
@@ -28,9 +94,10 @@ body,
 }
 
 body {
-  background: var(--bg);
-  color: var(--text);
+  background: var(--neutral);
+  color: var(--ink);
   font-family: var(--font);
+  font-weight: 500;
   -webkit-font-smoothing: antialiased;
 }
 

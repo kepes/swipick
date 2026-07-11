@@ -1,0 +1,33 @@
+/* Fixed bottom-right keycap-style toggle. Pressable 3D edge like every other
+   interactive element in Playroom. */
+.toggle {
+  position: fixed;
+  bottom: 14px;
+  right: 14px;
+  z-index: 6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  background: var(--surface);
+  color: var(--ink);
+  border: var(--outline) solid var(--ink);
+  border-bottom-width: 5px;
+  border-radius: var(--r-sm);
+  font-size: 1.1rem;
+  line-height: 1;
+  transition:
+    transform 0.06s ease,
+    border-bottom-width 0.06s ease;
+}
+
+.toggle:hover {
+  color: var(--coral);
+}
+
+.toggle:active {
+  transform: translateY(3px);
+  border-bottom-width: 2px;
+}
