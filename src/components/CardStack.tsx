@@ -41,9 +41,9 @@ const cardVariants = {
   // direction (label-based exit → the exiting card gets the direction of the latest decision).
   exit: (direction: 'right' | 'left' | 'up') => {
     const map = {
-      right: { x: 400, opacity: 0, rotate: 15 },
-      left: { x: -400, opacity: 0, rotate: -15 },
-      up: { y: -400, opacity: 0 },
+      right: { x: '130%', opacity: 0, rotate: 15 },
+      left: { x: '-130%', opacity: 0, rotate: -15 },
+      up: { y: '-130%', opacity: 0 },
     }
     return map[direction]
   },
@@ -99,7 +99,7 @@ export function CardStack() {
           initial="initial"
           animate="animate"
           exit="exit"
-          transition={{ duration: 0.25, ease: 'easeOut' }}
+          transition={{ duration: 0.24, ease: 'easeOut' }}
         >
           <MediaCard
             item={currentItem}

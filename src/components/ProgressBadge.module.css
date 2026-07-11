@@ -1,10 +1,12 @@
+/* Ink pill, top-right. Tabular numerals so the count doesn't jitter. */
 .badge {
   display: inline-block;
-  padding: 4px 10px;
-  background: var(--bg-elev);
-  border: 1px solid var(--surface-border);
-  border-radius: var(--radius-sm);
-  color: var(--text-dim);
-  font-size: 0.85rem;
+  padding: 7px 14px;
+  background: var(--ink);
+  border: var(--outline) solid var(--ink);
+  border-radius: var(--r-pill);
+  color: var(--on-ink);
+  font-size: 0.6875rem;
+  font-weight: 600;
   font-variant-numeric: tabular-nums;
 }

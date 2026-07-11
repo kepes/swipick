@@ -25,13 +25,23 @@
   pointer-events: none;
 }
 
+/* Decorative upcoming previews — slightly tilted photo-card motifs. The first
+   child sits further from the card (tilted −4°); the second, nearer, tilts +2°. */
 .nextThumb {
   height: 20vh;
-  border-radius: var(--radius-sm);
+  border-radius: 14px;
   overflow: hidden;
-  border: 1px solid var(--surface-border);
-  background: var(--bg-card);
-  box-shadow: var(--shadow);
+  border: var(--outline) solid var(--ink);
+  background: var(--surface);
+  box-shadow: var(--shadow-hard);
+}
+
+.nextThumb:first-child {
+  transform: rotate(-4deg);
+}
+
+.nextThumb:last-child {
+  transform: rotate(2deg);
 }
 
 .nextThumb img,

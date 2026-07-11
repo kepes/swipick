@@ -12,11 +12,12 @@ import { DELETE_DISPLAY } from '../domain/types'
 import type { Bucket, MediaItem } from '../domain/types'
 import styles from './BasketBar.module.css'
 
-// Dock magnification parameters: base 56px (twice the previous 28px), how far it
-// grows under the cursor, and how many pixels the range extends to each side.
-const BASE_SIZE = 56
-const PEAK_SIZE = 120
-const RANGE = 160
+// Dock magnification: base 44px thumbnail, growing to 84px under the cursor
+// (neighbours land around 60px), with the RANGE controlling how far the swell
+// reaches to each side.
+const BASE_SIZE = 44
+const PEAK_SIZE = 84
+const RANGE = 120
 
 function BucketChip({
   bucket,
@@ -101,7 +102,7 @@ function BucketChip({
             style={{ width: size, height: size }}
           />
         ))}
-      <span className={styles.label}>{label}</span>
+      <span className={styles.keycap}>{label}</span>
       <span className={styles.count}>{bucket.members.length}</span>
     </div>
   )
@@ -121,7 +122,17 @@ export function BasketBar() {
     return a.key.localeCompare(b.key)
   })
 
-  if (buckets.length === 0) return null
+  // Empty state: nudge the user toward the keyboard-first flow.
+  if (buckets.length === 0) {
+    return (
+      <div className={styles.bar}>
+        <div className={styles.hint}>Press any letter to create a bucket</div>
+      </div>
+    )
+  }
+
+  const userBuckets = buckets.filter((b) => b.kind !== 'delete')
+  const deleteBucket = buckets.find((b) => b.kind === 'delete')
 
   return (
     <div
@@ -129,9 +140,18 @@ export function BasketBar() {
       onMouseMove={(e) => mouseX.set(e.clientX)}
       onMouseLeave={() => mouseX.set(Number.POSITIVE_INFINITY)}
     >
-      {buckets.map((b) => (
-        <BucketChip key={b.key} bucket={b} mouseX={mouseX} />
-      ))}
+      {userBuckets.length > 0 && (
+        <div className={styles.panel}>
+          {userBuckets.map((b) => (
+            <BucketChip key={b.key} bucket={b} mouseX={mouseX} />
+          ))}
+        </div>
+      )}
+      {deleteBucket && (
+        <div className={`${styles.panel} ${styles.deletePanel}`}>
+          <BucketChip bucket={deleteBucket} mouseX={mouseX} />
+        </div>
+      )}
     </div>
   )
 }

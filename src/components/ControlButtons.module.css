@@ -1,41 +1,70 @@
 .row {
   display: flex;
-  gap: 8px;
+  gap: var(--s-sm);
   align-items: center;
   flex-wrap: wrap;
+  justify-content: center;
 }
 
+/* Base pressable button: chunky ink outline with a thick bottom edge that
+   collapses on :active, translating the button down 3px — a physical press. */
 .btn {
-  padding: 8px 16px;
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--surface-border);
-  background: var(--bg-card);
-  color: var(--text);
-  font-size: 0.9rem;
-  transition: background 0.15s;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border: var(--outline) solid var(--ink);
+  border-bottom-width: 5px;
+  border-radius: var(--r-sm);
+  background: var(--surface);
+  color: var(--ink);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  transition:
+    transform 0.06s ease,
+    border-bottom-width 0.06s ease;
 }
 
-.btn:hover:not(:disabled) {
-  background: var(--bg-elev);
+.btn:active:not(:disabled) {
+  transform: translateY(3px);
+  border-bottom-width: 2px;
+}
+
+/* Mini keycap embedded in a secondary button, showing its shortcut. */
+.keycap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  background: var(--neutral);
+  border: var(--outline) solid var(--ink);
+  border-radius: 6px;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.secondary {
+  background: var(--surface);
+  color: var(--ink);
 }
 
 .primary {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: #fff;
-  font-weight: 600;
-}
-
-.primary:hover:not(:disabled) {
-  background: var(--accent-hover);
-  border-color: var(--accent-hover);
+  background: var(--coral);
+  border-color: var(--ink);
+  color: var(--on-coral);
+  font-weight: 800;
+  padding: 10px 26px;
 }
 
 .danger {
-  border-color: var(--danger);
-  color: var(--danger);
+  background: transparent;
+  border-color: var(--error);
+  color: var(--error);
 }
 
 .danger:hover:not(:disabled) {
-  background: var(--danger-dim);
+  background: var(--error-container);
 }

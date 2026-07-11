@@ -1,44 +1,101 @@
+/* The bucket dock. Transparent bar so the media shows through; the buckets
+   live inside outlined surface panels that float above it. Chips bottom-align
+   so a magnified thumbnail swells upward out of the panel. */
 .bar {
   display: flex;
   flex-wrap: wrap;
-  align-items: flex-start;
-  gap: 8px;
-  padding: 10px 16px;
+  align-items: flex-end;
+  justify-content: center;
+  gap: var(--s-md);
+  padding: var(--s-md);
   background: transparent;
 }
 
-.chip {
+.panel {
   display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 4px 10px 4px 6px;
-  background: var(--bg-card);
-  border: 1px solid var(--surface-border);
-  border-radius: var(--radius-sm);
-  font-size: 0.85rem;
+  align-items: flex-end;
+  gap: var(--s-md);
+  padding: 10px 14px;
+  background: var(--surface);
+  border: var(--outline) solid var(--ink);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-hard);
 }
 
-.chip.delete {
-  border-color: var(--danger);
-  background: var(--danger-dim);
+.deletePanel {
+  background: var(--error-container);
+  border-color: var(--error);
+}
+
+/* Each bucket is a column: thumbnail → keycap → counter. */
+.chip {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
 }
 
 .thumb {
-  /* width/height come from the inline motion style (dock magnification); this is just a fallback. */
-  width: 56px;
-  height: 56px;
+  /* width/height come from the inline motion style (dock magnification); these
+     are the resting values. Grows upward from its bottom edge. */
+  width: 44px;
+  height: 44px;
   object-fit: cover;
-  border-radius: 4px;
+  border: var(--outline) solid var(--ink);
+  border-radius: 13px;
   flex-shrink: 0;
-  transform-origin: top center;
+  transform-origin: bottom center;
+  box-shadow: 0 10px 24px rgba(31, 26, 20, 0.25);
 }
 
-.label {
-  color: var(--text);
-  font-weight: 500;
+.delete .thumb {
+  border-color: var(--error);
+}
+
+/* Keycap showing the bucket's shortcut letter (or the delete label). */
+.keycap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 24px;
+  height: 24px;
+  padding: 0 7px;
+  background: var(--surface);
+  color: var(--ink);
+  border: var(--outline) solid var(--ink);
+  border-bottom-width: 4px;
+  border-radius: var(--r-xs);
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.chip:hover .keycap {
+  color: var(--coral);
+}
+
+.delete .keycap {
+  color: var(--error);
+  border-color: var(--error);
 }
 
 .count {
-  color: var(--text-dim);
+  color: var(--taupe);
+  font-size: 0.6875rem;
+  font-weight: 600;
   font-variant-numeric: tabular-nums;
+}
+
+.delete .count {
+  color: var(--error);
+}
+
+/* Empty-state hint pill. */
+.hint {
+  padding: 8px 18px;
+  background: transparent;
+  color: var(--taupe);
+  border: var(--outline) dashed var(--taupe);
+  border-radius: var(--r-pill);
+  font-size: 0.8125rem;
+  font-weight: 700;
 }

@@ -10,18 +10,18 @@ export function ControlButtons() {
   return (
     <div className={styles.row}>
       <button
-        className={styles.btn}
+        className={`${styles.btn} ${styles.secondary}`}
         disabled={historyCursor === 0}
         onClick={() => useSortStore.getState().undo()}
       >
-        ◀ Undo
+        Undo<span className={styles.keycap} aria-hidden="true">↓</span>
       </button>
       <button
-        className={styles.btn}
+        className={`${styles.btn} ${styles.secondary}`}
         disabled={historyCursor >= historyLength}
         onClick={() => useSortStore.getState().redo()}
       >
-        Redo
+        Redo<span className={styles.keycap} aria-hidden="true">↑</span>
       </button>
       <button
         className={`${styles.btn} ${styles.primary}`}
