@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#f0eee9;font-family:Manrope,system-ui,sans-serif}
+a{color:#c2410c}a:hover{color:#9a3412}
+.dv-turn{padding:40px 44px 32px;border-bottom:1px solid rgba(0,0,0,.08);scroll-margin-top:16px}
+.dv-thd{display:flex;align-items:baseline;gap:10px;margin:0 0 20px}
+.dv-tid{font:600 10px ui-monospace,Menlo,monospace;padding:3px 7px;background:#1a1a1a;color:#fff;border-radius:4px;text-decoration:none}
+.dv-tname{font:600 13px/1.2 Manrope,sans-serif;color:#1a1a1a}
+.dv-opts{display:flex;flex-wrap:wrap;gap:28px;align-items:flex-start}
+.dv-opt{flex:none;display:flex;flex-direction:column;gap:9px;scroll-margin-top:16px}
+.dv-oid{font:600 10.5px ui-monospace,Menlo,monospace;padding:3px 7px;background:rgba(0,0,0,.08);color:#1a1a1a;border-radius:5px;text-decoration:none}
+.dv-olabel{display:flex;align-items:baseline;gap:8px;font:400 11px/1.3 Manrope,sans-serif;color:rgba(0,0,0,.55)}
+.dv-card{max-width:100%;background:#fff;border:1px solid rgba(0,0,0,.08);border-radius:8px;box-shadow:0 1px 3px rgba(0,0,0,.06);overflow:hidden}
+.dv-opt:target .dv-oid{background:#c2410c;color:#fff}
+.dv-next{margin:22px 0 0;font:12px/1.5 Manrope,sans-serif;color:rgba(0,0,0,.5)}
+</style>
+</helmet>
+
+<section class="dv-turn" id="t2" data-screen-label="Turn 2 — Playroom, mind a 4 képernyő">
+<div class="dv-thd"><a class="dv-tid" href="#t2">2</a><span class="dv-tname">Playroom (<a class="dv-oid" href="#1b">1b</a>) kidolgozva — mind a 4 képernyő + dark mód</span></div>
+<div class="dv-opts">
+
+<!-- ============ 2a START (light) ============ -->
+<div class="dv-opt" id="2a" data-screen-label="2a Start light">
+  <div class="dv-olabel"><a class="dv-oid" href="#2a">2a</a>Start képernyő — világos</div>
+  <div class="dv-card" style="width:920px">
+    <div style="position:relative;width:920px;height:575px;background:#f4efe8;font-family:Sora,sans-serif;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0">
+      <!-- decorative tilted cards behind logo -->
+      <div style="position:absolute;top:96px;left:50%;transform:translateX(-50%)">
+        <div style="position:absolute;left:-118px;top:-8px;width:64px;height:84px;border-radius:14px;border:2px solid #1f1a14;background:repeating-linear-gradient(45deg,#ddd4c6,#ddd4c6 8px,#d5cabb 8px,#d5cabb 16px);transform:rotate(-8deg)"></div>
+        <div style="position:absolute;left:54px;top:-4px;width:64px;height:84px;border-radius:14px;border:2px solid #1f1a14;background:repeating-linear-gradient(45deg,#d6ddc6,#d6ddc6 8px,#ccd5ba 8px,#ccd5ba 16px);transform:rotate(7deg)"></div>
+      </div>
+      <h1 style="margin:0;font:800 52px Sora;color:#1f1a14;letter-spacing:-.02em">Swipick<span style="color:#ff6b3d">.</span></h1>
+      <p style="margin:12px 0 0;font:500 15px Sora;color:#8a7c6b;text-align:center;max-width:420px;line-height:1.5">Pick a folder and sort your images with the keyboard.</p>
+      <button style="margin-top:32px;padding:14px 34px;background:#ff6b3d;border:2px solid #1f1a14;border-bottom-width:6px;border-radius:15px;font:800 16px Sora;color:#fff;cursor:pointer">Choose folder</button>
+      <div style="margin-top:44px;display:flex;align-items:center;gap:22px;font:600 12px Sora;color:#8a7c6b">
+        <span style="display:flex;align-items:center;gap:7px"><span style="display:inline-flex;align-items:center;justify-content:center;min-width:24px;height:24px;padding:0 6px;background:#fffdf9;border:2px solid #1f1a14;border-bottom-width:4px;border-radius:7px;font:700 11px Sora;color:#1f1a14">A–Z</span>bucket</span>
+        <span style="display:flex;align-items:center;gap:7px"><span style="display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;background:#fffdf9;border:2px solid #1f1a14;border-bottom-width:4px;border-radius:7px;font:700 11px Sora;color:#1f1a14">→</span>keep</span>
+        <span style="display:flex;align-items:center;gap:7px"><span style="display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;background:#ffe9e2;border:2px solid #d63b1f;border-bottom-width:4px;border-radius:7px;font:700 11px Sora;color:#d63b1f">←</span>delete</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 2b RESUME card ============ -->
+<div class="dv-opt" id="2b" data-screen-label="2b Resume variáns">
+  <div class="dv-olabel"><a class="dv-oid" href="#2b">2b</a>Start — mentett munkamenet (Resume) kártya</div>
+  <div class="dv-card" style="width:560px">
+    <div style="padding:48px;background:#f4efe8;font-family:Sora,sans-serif;display:flex;justify-content:center">
+      <div style="width:100%;padding:26px 28px;background:#fffdf9;border:2px solid #1f1a14;border-radius:20px;box-shadow:0 6px 0 #1f1a14">
+        <p style="margin:0;font:500 14px Sora;color:#5c5245;line-height:1.6">The folder <strong style="color:#1f1a14">Vacation2025</strong> has a saved session (<strong style="color:#1f1a14">37</strong> earlier decisions).</p>
+        <div style="display:flex;gap:10px;margin-top:20px">
+          <button style="padding:11px 22px;background:#ff6b3d;border:2px solid #1f1a14;border-bottom-width:5px;border-radius:13px;font:800 13px Sora;color:#fff;cursor:pointer">Resume</button>
+          <button style="padding:11px 22px;background:transparent;border:2px solid #1f1a14;border-bottom-width:5px;border-radius:13px;font:700 13px Sora;color:#1f1a14;cursor:pointer">Start over</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 2c DONE state ============ -->
+<div class="dv-opt" id="2c" data-screen-label="2c Done state">
+  <div class="dv-olabel"><a class="dv-oid" href="#2c">2c</a>End-of-deck — minden átnézve (a sorting chrome marad)</div>
+  <div class="dv-card" style="width:920px">
+    <div style="position:relative;width:920px;height:575px;background:#f4efe8;font-family:Sora,sans-serif;overflow:hidden">
+      <div style="position:absolute;top:12px;left:0;right:0;display:flex;justify-content:center;align-items:flex-start;gap:12px;opacity:.55">
+        <div style="display:flex;align-items:flex-start;gap:12px;padding:12px 16px;background:#fffdf9;border:2px solid #1f1a14;border-radius:20px;box-shadow:0 6px 0 #1f1a14">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:6px">
+            <div style="width:44px;height:44px;border-radius:12px;background:repeating-linear-gradient(45deg,#d8cfc2,#d8cfc2 8px,#d0c6b7 8px,#d0c6b7 16px);border:2px solid #1f1a14"></div>
+            <span style="display:inline-flex;align-items:center;justify-content:center;min-width:24px;height:24px;padding:0 6px;background:#fff;border:2px solid #1f1a14;border-bottom-width:4px;border-radius:7px;font:700 12px Sora;color:#1f1a14">A</span>
+            <span style="font:600 11px Sora;color:#8a7c6b;font-variant-numeric:tabular-nums">128</span>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:6px">
+            <div style="width:44px;height:44px;border-radius:12px;background:repeating-linear-gradient(45deg,#d6ddc6,#d6ddc6 8px,#ccd5ba 8px,#ccd5ba 16px);border:2px solid #1f1a14"></div>
+            <span style="display:inline-flex;align-items:center;justify-content:center;min-width:24px;height:24px;padding:0 6px;background:#fff;border:2px solid #1f1a14;border-bottom-width:4px;border-radius:7px;font:700 12px Sora;color:#1f1a14">B</span>
+            <span style="font:600 11px Sora;color:#8a7c6b;font-variant-numeric:tabular-nums">74</span>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 16px;background:#ffe9e2;border:2px solid #d63b1f;border-radius:20px;box-shadow:0 6px 0 #d63b1f">
+          <div style="width:44px;height:44px;border-radius:12px;background:repeating-linear-gradient(45deg,#eec9bd,#eec9bd 8px,#e8bfb1 8px,#e8bfb1 16px);border:2px solid #d63b1f"></div>
+          <span style="display:inline-flex;align-items:center;justify-content:center;min-width:24px;height:24px;padding:0 6px;background:#d63b1f;border:2px solid #a82c15;border-bottom-width:4px;border-radius:7px;font:700 12px Sora;color:#fff">←</span>
+          <span style="font:700 11px Sora;color:#d63b1f;font-variant-numeric:tabular-nums">38</span>
+        </div>
+      </div>
+      <div style="position:absolute;top:16px;right:16px;padding:7px 14px;background:#1f1a14;border-radius:99px;font:700 12px Sora;color:#f4efe8;font-variant-numeric:tabular-nums">240 <span style="color:#8a7c6b">/ 240</span></div>
+      <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px">
+        <div style="font-size:44px">🎉</div>
+        <h2 style="margin:0;font:800 28px Sora;color:#1f1a14">You've reviewed everything</h2>
+        <button style="padding:16px 52px;background:#ff6b3d;border:2px solid #1f1a14;border-bottom-width:7px;border-radius:17px;font:800 19px Sora;color:#fff;cursor:pointer">Sort</button>
+        <p style="margin:0;font:500 12px Sora;color:#8a7c6b">240 decisions · this will move the files for real</p>
+      </div>
+      <div style="position:absolute;left:0;right:0;bottom:16px;display:flex;justify-content:center;gap:10px;opacity:.55">
+        <button style="padding:10px 18px;background:#fffdf9;border:2px solid #1f1a14;border-bottom-width:5px;border-radius:13px;font:700 13px Sora;color:#1f1a14;cursor:pointer">◀ Undo</button>
+        <button style="padding:10px 18px;background:transparent;border:2px solid #d63b1f;border-bottom-width:5px;border-radius:13px;font:700 13px Sora;color:#d63b1f;cursor:pointer">Start over</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 2d OVERLAY ============ -->
+<div class="dv-opt" id="2d" data-screen-label="2d Sorting overlay">
+  <div class="dv-olabel"><a class="dv-oid" href="#2d">2d</a>Sorting progress overlay</div>
+  <div class="dv-card" style="width:560px">
+    <div style="position:relative;width:560px;height:360px;background:#f4efe8;font-family:Sora,sans-serif;overflow:hidden">
+      <div style="position:absolute;inset:0;background:rgba(31,26,20,.55);display:flex;align-items:center;justify-content:center">
+        <div style="display:flex;flex-direction:column;align-items:center;gap:18px;padding:32px 44px;background:#fffdf9;border:2px solid #1f1a14;border-radius:20px;box-shadow:0 8px 0 #1f1a14">
+          <div style="width:40px;height:40px;border-radius:50%;border:4px solid #f0e5d8;border-top-color:#ff6b3d"></div>
+          <p style="margin:0;font:700 14px Sora;color:#1f1a14">Sorting in progress — <span style="font-variant-numeric:tabular-nums">86 / 240</span></p>
+          <div style="width:220px;height:10px;border:2px solid #1f1a14;border-radius:99px;overflow:hidden;background:#f0e5d8">
+            <div style="width:36%;height:100%;background:#ff6b3d"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 2e RESULT ============ -->
+<div class="dv-opt" id="2e" data-screen-label="2e Result">
+  <div class="dv-olabel"><a class="dv-oid" href="#2e">2e</a>Result képernyő</div>
+  <div class="dv-card" style="width:920px">
+    <div style="position:relative;width:920px;height:575px;background:#f4efe8;font-family:Sora,sans-serif;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center">
+      <div style="display:flex;align-items:center;justify-content:center;width:72px;height:72px;background:#2f9e6e;border:2px solid #1f1a14;border-bottom-width:6px;border-radius:22px;font:800 34px Sora;color:#fff;transform:rotate(-4deg)">✓</div>
+      <h1 style="margin:26px 0 0;font:800 40px Sora;color:#1f1a14;letter-spacing:-.02em">Done!</h1>
+      <p style="margin:12px 0 0;font:500 15px Sora;color:#5c5245"><strong style="color:#1f1a14">202</strong> images moved, <strong style="color:#d63b1f">38</strong> deleted</p>
+      <button style="margin-top:34px;padding:12px 26px;background:#fffdf9;border:2px solid #1f1a14;border-bottom-width:5px;border-radius:13px;font:700 14px Sora;color:#1f1a14;cursor:pointer">Back to folder picker</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 2f SORTING dark ============ -->
+<div class="dv-opt" id="2f" data-screen-label="2f Sorting dark">
+  <div class="dv-olabel"><a class="dv-oid" href="#2f">2f</a>Sorting — dark mód (a toggle másik fele)</div>
+  <div class="dv-card" style="width:920px">
+    <div style="position:relative;width:920px;height:575px;background:#171310;font-family:Sora,sans-serif;overflow:hidden">
+      <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center">
+        <div style="width:600px;height:460px;margin-top:14px;border-radius:24px;background:repeating-linear-gradient(45deg,#241e18,#241e18 14px,#292219 14px,#292219 28px);border:1px solid rgba(244,239,232,.1);box-shadow:0 24px 60px rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;transform:rotate(-.6deg)">
+          <span style="font:500 12px ui-monospace,Menlo,monospace;color:#7a6e5f;letter-spacing:.08em">CURRENT MEDIA</span>
+        </div>
+      </div>
+      <div style="position:absolute;top:12px;left:0;right:0;display:flex;justify-content:center;align-items:flex-start;gap:12px">
+        <div style="display:flex;align-items:flex-start;gap:12px;padding:12px 16px;background:#262019;border:2px solid #f4efe8;border-radius:20px;box-shadow:0 6px 0 rgba(244,239,232,.9)">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:6px">
+            <div style="width:44px;height:44px;border-radius:12px;background:repeating-linear-gradient(45deg,#3a332a,#3a332a 8px,#423a30 8px,#423a30 16px);border:2px solid #f4efe8"></div>
+            <span style="display:inline-flex;align-items:center;justify-content:center;min-width:24px;height:24px;padding:0 6px;background:#171310;border:2px solid #f4efe8;border-bottom-width:4px;border-radius:7px;font:700 12px Sora;color:#f4efe8">A</span>
+            <span style="font:600 11px Sora;color:#9a8d7c;font-variant-numeric:tabular-nums">12</span>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:6px;margin-top:-18px">
+            <div style="width:78px;height:78px;border-radius:16px;background:repeating-linear-gradient(45deg,#39402e,#39402e 9px,#414833 9px,#414833 18px);border:2px solid #f4efe8;box-shadow:0 10px 24px rgba(0,0,0,.5)"></div>
+            <span style="display:inline-flex;align-items:center;justify-content:center;min-width:26px;height:26px;padding:0 7px;background:#ff6b3d;border:2px solid #f4efe8;border-bottom-width:4px;border-radius:8px;font:700 13px Sora;color:#fff">B</span>
+            <span style="font:700 12px Sora;color:#f4efe8;font-variant-numeric:tabular-nums">5</span>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:6px">
+            <div style="width:44px;height:44px;border-radius:12px;background:repeating-linear-gradient(45deg,#3a332a,#3a332a 8px,#423a30 8px,#423a30 16px);border:2px solid #f4efe8"></div>
+            <span style="display:inline-flex;align-items:center;justify-content:center;min-width:24px;height:24px;padding:0 6px;background:#171310;border:2px solid #f4efe8;border-bottom-width:4px;border-radius:7px;font:700 12px Sora;color:#f4efe8">C</span>
+            <span style="font:600 11px Sora;color:#9a8d7c;font-variant-numeric:tabular-nums">8</span>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 16px;background:#301a13;border:2px solid #ff7d5e;border-radius:20px;box-shadow:0 6px 0 rgba(255,125,94,.85)">
+          <div style="width:44px;height:44px;border-radius:12px;background:repeating-linear-gradient(45deg,#47281e,#47281e 8px,#4f2d22 8px,#4f2d22 16px);border:2px solid #ff7d5e"></div>
+          <span style="display:inline-flex;align-items:center;justify-content:center;min-width:24px;height:24px;padding:0 6px;background:#ff7d5e;border:2px solid #c24a2c;border-bottom-width:4px;border-radius:7px;font:700 12px Sora;color:#171310">←</span>
+          <span style="font:700 11px Sora;color:#ff7d5e;font-variant-numeric:tabular-nums">3</span>
+        </div>
+      </div>
+      <div style="position:absolute;top:16px;right:16px;padding:7px 14px;background:#f4efe8;border-radius:99px;font:700 12px Sora;color:#171310;font-variant-numeric:tabular-nums">37 <span style="color:#9a8d7c">/ 240</span></div>
+      <div style="position:absolute;left:18px;bottom:18px;display:flex;align-items:flex-end;gap:10px">
+        <div style="width:64px;height:84px;border-radius:14px;border:2px solid #f4efe8;background:repeating-linear-gradient(45deg,#332c24,#332c24 8px,#3a3229 8px,#3a3229 16px);transform:rotate(-4deg)"></div>
+        <div style="width:78px;height:102px;border-radius:14px;border:2px solid #f4efe8;background:repeating-linear-gradient(45deg,#333a28,#333a28 8px,#3a412d 8px,#3a412d 16px);transform:rotate(2deg);box-shadow:0 8px 0 rgba(244,239,232,.2)"></div>
+      </div>
+      <div style="position:absolute;left:0;right:0;bottom:16px;display:flex;flex-direction:column;align-items:center;gap:10px">
+        <div style="padding:5px 14px;background:#262019;border:2px solid #f4efe8;border-radius:99px;font:600 11px ui-monospace,Menlo,monospace;color:#c9beb0">IMG_2024.jpg</div>
+        <div style="display:flex;gap:10px">
+          <button style="padding:10px 18px;background:#262019;border:2px solid #f4efe8;border-bottom-width:5px;border-radius:13px;font:700 13px Sora;color:#f4efe8;cursor:pointer">◀ Undo</button>
+          <button style="padding:10px 18px;background:#262019;border:2px solid #f4efe8;border-bottom-width:5px;border-radius:13px;font:700 13px Sora;color:#9a8d7c;cursor:pointer">Redo</button>
+          <button style="padding:10px 26px;background:#ff6b3d;border:2px solid #f4efe8;border-bottom-width:5px;border-radius:13px;font:800 13px Sora;color:#fff;cursor:pointer">Sort</button>
+          <button style="padding:10px 18px;background:transparent;border:2px solid #ff7d5e;border-bottom-width:5px;border-radius:13px;font:700 13px Sora;color:#ff7d5e;cursor:pointer">Start over</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>
+<p class="dv-next">Próbáld: „építsd meg interaktív prototípusként toggle-lel" · „a <a class="dv-oid" href="#2c">2c</a> ünneplése legyen visszafogottabb" · „mutasd a hibaállapotokat is"</p>
+</section>
+
+<section class="dv-turn" id="t1" data-screen-label="Turn 1 — Sorting screen directions">
+<div class="dv-thd"><a class="dv-tid" href="#t1">1</a><span class="dv-tname">Swipick — sorting képernyő, 3 irány (meleg accent, humanista tipó, keycap hangsúly)</span></div>
+<div class="dv-opts">
+
+<!-- ============ 1a STUDIO ============ -->
+<div class="dv-opt" id="1a" data-screen-label="1a Studio">
+  <div class="dv-olabel"><a class="dv-oid" href="#1a">1a</a>Studio — meleg sötét, üveges lebegő rétegek, precíz keycap-ek (Manrope)</div>
+  <div class="dv-card" style="width:920px">
+    <div style="position:relative;width:920px;height:575px;background:#171412;font-family:Manrope,sans-serif;overflow:hidden">
+      <!-- media -->
+      <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center">
+        <div style="width:640px;height:575px;background:repeating-linear-gradient(45deg,#221d19,#221d19 14px,#26211c 14px,#26211c 28px);display:flex;align-items:center;justify-content:center">
+          <span style="font:500 12px ui-monospace,Menlo,monospace;color:#6b6157;letter-spacing:.08em">CURRENT MEDIA · contain</span>
+        </div>
+      </div>
+      <!-- bucket bar -->
+      <div style="position:absolute;top:14px;left:0;right:0;display:flex;justify-content:center;gap:10px">
+        <div style="display:flex;align-items:center;gap:9px;padding:7px 12px 7px 7px;background:rgba(28,24,20,.72);backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.09);border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,.35)">
+          <div style="width:44px;height:44px;border-radius:8px;background:repeating-linear-gradient(45deg,#3a332c,#3a332c 8px,#423a32 8px,#423a32 16px)"></div>
+          <div style="display:flex;flex-direction:column;gap:3px">
+            <span style="display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:22px;padding:0 5px;background:linear-gradient(180deg,#3d3630,#2b2622);border:1px solid rgba(255,255,255,.14);border-bottom-width:3px;border-radius:6px;font:700 12px Manrope;color:#f2ede7">A</span>
+            <span style="font:600 11px Manrope;color:#94897c;font-variant-numeric:tabular-nums">12</span>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:9px;padding:7px 12px 7px 7px;background:rgba(28,24,20,.72);backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.09);border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,.35)">
+          <div style="width:44px;height:44px;border-radius:8px;background:repeating-linear-gradient(45deg,#33372c,#33372c 8px,#3a3f32 8px,#3a3f32 16px)"></div>
+          <div style="display:flex;flex-direction:column;gap:3px">
+            <span style="display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:22px;padding:0 5px;background:linear-gradient(180deg,#3d3630,#2b2622);border:1px solid rgba(255,255,255,.14);border-bottom-width:3px;border-radius:6px;font:700 12px Manrope;color:#f2ede7">B</span>
+            <span style="font:600 11px Manrope;color:#94897c;font-variant-numeric:tabular-nums">5</span>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:9px;padding:7px 12px 7px 7px;background:rgba(46,22,18,.75);backdrop-filter:blur(14px);border:1px solid rgba(255,107,74,.35);border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,.35)">
+          <div style="width:44px;height:44px;border-radius:8px;background:repeating-linear-gradient(45deg,#3d241d,#3d241d 8px,#452a22 8px,#452a22 16px)"></div>
+          <div style="display:flex;flex-direction:column;gap:3px">
+            <span style="display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:22px;padding:0 6px;background:linear-gradient(180deg,#57281f,#3d1c16);border:1px solid rgba(255,107,74,.4);border-bottom-width:3px;border-radius:6px;font:700 11px Manrope;color:#ff8f70">←</span>
+            <span style="font:600 11px Manrope;color:#c97a63;font-variant-numeric:tabular-nums">3</span>
+          </div>
+        </div>
+      </div>
+      <!-- progress -->
+      <div style="position:absolute;top:16px;right:16px;padding:6px 12px;background:rgba(28,24,20,.72);backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.09);border-radius:99px;font:600 12px Manrope;color:#b0a598;font-variant-numeric:tabular-nums">37 <span style="color:#6b6157">/ 240</span></div>
+      <!-- next up -->
+      <div style="position:absolute;left:16px;bottom:16px;display:flex;align-items:flex-end;gap:8px">
+        <div style="width:66px;height:88px;border-radius:10px;border:1px solid rgba(255,255,255,.1);background:repeating-linear-gradient(45deg,#2a2520,#2a2520 8px,#2f2924 8px,#2f2924 16px);box-shadow:0 8px 20px rgba(0,0,0,.4)"></div>
+        <div style="width:80px;height:106px;border-radius:10px;border:1px solid rgba(255,255,255,.14);background:repeating-linear-gradient(45deg,#2e2823,#2e2823 8px,#342d27 8px,#342d27 16px);box-shadow:0 8px 20px rgba(0,0,0,.4)"></div>
+      </div>
+      <!-- footer -->
+      <div style="position:absolute;left:0;right:0;bottom:16px;display:flex;flex-direction:column;align-items:center;gap:10px">
+        <div style="padding:5px 12px;background:rgba(28,24,20,.72);backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.09);border-radius:99px;font:500 11.5px ui-monospace,Menlo,monospace;color:#b0a598">IMG_2024.jpg</div>
+        <div style="display:flex;gap:8px">
+          <button style="display:flex;align-items:center;gap:7px;padding:9px 16px;background:rgba(28,24,20,.72);backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.12);border-radius:11px;font:600 13px Manrope;color:#e8e1d8;cursor:pointer">◀ Undo <span style="padding:1px 5px;border:1px solid rgba(255,255,255,.16);border-bottom-width:2px;border-radius:4px;font:600 10px Manrope;color:#94897c">⌘Z</span></button>
+          <button style="padding:9px 16px;background:rgba(28,24,20,.72);backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.12);border-radius:11px;font:600 13px Manrope;color:#94897c;cursor:pointer">Redo</button>
+          <button style="padding:9px 22px;background:linear-gradient(180deg,#ff7a52,#f05a30);border:1px solid #ff8f70;border-radius:11px;font:800 13px Manrope;color:#fff;box-shadow:0 4px 16px rgba(240,90,48,.4);cursor:pointer">Sort</button>
+          <button style="padding:9px 16px;background:transparent;border:1px solid rgba(255,107,74,.35);border-radius:11px;font:600 13px Manrope;color:#ff8f70;cursor:pointer">Start over</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 1b PLAYROOM ============ -->
+<div class="dv-opt" id="1b" data-screen-label="1b Playroom">
+  <div class="dv-olabel"><a class="dv-oid" href="#1b">1b</a>Playroom — világos, játékos, chunky formák, hangsúlyos dock-nagyítás (Sora)</div>
+  <div class="dv-card" style="width:920px">
+    <div style="position:relative;width:920px;height:575px;background:#f4efe8;font-family:Sora,sans-serif;overflow:hidden">
+      <!-- media as a rounded card -->
+      <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center">
+        <div style="width:600px;height:460px;margin-top:14px;border-radius:24px;background:repeating-linear-gradient(45deg,#e5ddd1,#e5ddd1 14px,#ded5c8 14px,#ded5c8 28px);border:1px solid rgba(0,0,0,.07);box-shadow:0 24px 60px rgba(60,40,20,.16);display:flex;align-items:center;justify-content:center;transform:rotate(-.6deg)">
+          <span style="font:500 12px ui-monospace,Menlo,monospace;color:#a09384;letter-spacing:.08em">CURRENT MEDIA</span>
+        </div>
+      </div>
+      <!-- dock-style bucket bar with static magnification -->
+      <div style="position:absolute;top:12px;left:0;right:0;display:flex;justify-content:center;align-items:flex-start;gap:12px">
+        <div style="display:flex;align-items:flex-start;gap:12px;padding:12px 16px;background:#fffdf9;border:2px solid #1f1a14;border-radius:20px;box-shadow:0 6px 0 #1f1a14">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:6px">
+            <div style="width:44px;height:44px;border-radius:12px;background:repeating-linear-gradient(45deg,#d8cfc2,#d8cfc2 8px,#d0c6b7 8px,#d0c6b7 16px);border:2px solid #1f1a14"></div>
+            <span style="display:inline-flex;align-items:center;justify-content:center;min-width:24px;height:24px;padding:0 6px;background:#fff;border:2px solid #1f1a14;border-bottom-width:4px;border-radius:7px;font:700 12px Sora;color:#1f1a14">A</span>
+            <span style="font:600 11px Sora;color:#8a7c6b;font-variant-numeric:tabular-nums">12</span>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:6px;margin-top:-18px">
+            <div style="width:78px;height:78px;border-radius:16px;background:repeating-linear-gradient(45deg,#cfd8c2,#cfd8c2 9px,#c5d0b6 9px,#c5d0b6 18px);border:2px solid #1f1a14;box-shadow:0 10px 24px rgba(60,40,20,.25)"></div>
+            <span style="display:inline-flex;align-items:center;justify-content:center;min-width:26px;height:26px;padding:0 7px;background:#ff6b3d;border:2px solid #1f1a14;border-bottom-width:4px;border-radius:8px;font:700 13px Sora;color:#fff">B</span>
+            <span style="font:700 12px Sora;color:#1f1a14;font-variant-numeric:tabular-nums">5</span>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:6px">
+            <div style="width:44px;height:44px;border-radius:12px;background:repeating-linear-gradient(45deg,#d8cfc2,#d8cfc2 8px,#d0c6b7 8px,#d0c6b7 16px);border:2px solid #1f1a14"></div>
+            <span style="display:inline-flex;align-items:center;justify-content:center;min-width:24px;height:24px;padding:0 6px;background:#fff;border:2px solid #1f1a14;border-bottom-width:4px;border-radius:7px;font:700 12px Sora;color:#1f1a14">C</span>
+            <span style="font:600 11px Sora;color:#8a7c6b;font-variant-numeric:tabular-nums">8</span>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 16px;background:#ffe9e2;border:2px solid #d63b1f;border-radius:20px;box-shadow:0 6px 0 #d63b1f">
+          <div style="width:44px;height:44px;border-radius:12px;background:repeating-linear-gradient(45deg,#eec9bd,#eec9bd 8px,#e8bfb1 8px,#e8bfb1 16px);border:2px solid #d63b1f"></div>
+          <span style="display:inline-flex;align-items:center;justify-content:center;min-width:24px;height:24px;padding:0 6px;background:#d63b1f;border:2px solid #a82c15;border-bottom-width:4px;border-radius:7px;font:700 12px Sora;color:#fff">←</span>
+          <span style="font:700 11px Sora;color:#d63b1f;font-variant-numeric:tabular-nums">3</span>
+        </div>
+      </div>
+      <!-- progress -->
+      <div style="position:absolute;top:16px;right:16px;padding:7px 14px;background:#1f1a14;border-radius:99px;font:700 12px Sora;color:#f4efe8;font-variant-numeric:tabular-nums">37 <span style="color:#8a7c6b">/ 240</span></div>
+      <!-- next up -->
+      <div style="position:absolute;left:18px;bottom:18px;display:flex;align-items:flex-end;gap:10px">
+        <div style="width:64px;height:84px;border-radius:14px;border:2px solid #1f1a14;background:repeating-linear-gradient(45deg,#ddd4c6,#ddd4c6 8px,#d5cabb 8px,#d5cabb 16px);transform:rotate(-4deg)"></div>
+        <div style="width:78px;height:102px;border-radius:14px;border:2px solid #1f1a14;background:repeating-linear-gradient(45deg,#d6ddc6,#d6ddc6 8px,#ccd5ba 8px,#ccd5ba 16px);transform:rotate(2deg);box-shadow:0 8px 0 rgba(31,26,20,.15)"></div>
+      </div>
+      <!-- footer -->
+      <div style="position:absolute;left:0;right:0;bottom:16px;display:flex;flex-direction:column;align-items:center;gap:10px">
+        <div style="padding:5px 14px;background:#fffdf9;border:2px solid #1f1a14;border-radius:99px;font:600 11px ui-monospace,Menlo,monospace;color:#5c5245">IMG_2024.jpg</div>
+        <div style="display:flex;gap:10px">
+          <button style="padding:10px 18px;background:#fffdf9;border:2px solid #1f1a14;border-bottom-width:5px;border-radius:13px;font:700 13px Sora;color:#1f1a14;cursor:pointer">◀ Undo</button>
+          <button style="padding:10px 18px;background:#fffdf9;border:2px solid #1f1a14;border-bottom-width:5px;border-radius:13px;font:700 13px Sora;color:#a09384;cursor:pointer">Redo</button>
+          <button style="padding:10px 26px;background:#ff6b3d;border:2px solid #1f1a14;border-bottom-width:5px;border-radius:13px;font:800 13px Sora;color:#fff;cursor:pointer">Sort</button>
+          <button style="padding:10px 18px;background:transparent;border:2px solid #d63b1f;border-bottom-width:5px;border-radius:13px;font:700 13px Sora;color:#d63b1f;cursor:pointer">Start over</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 1c DARKROOM ============ -->
+<div class="dv-opt" id="1c" data-screen-label="1c Darkroom">
+  <div class="dv-olabel"><a class="dv-oid" href="#1c">1c</a>Darkroom — galéria-minimál, hairline UI, a média az egyetlen fényforrás</div>
+  <div class="dv-card" style="width:920px">
+    <div style="position:relative;width:920px;height:575px;background:#0b0a09;font-family:Manrope,sans-serif;overflow:hidden">
+      <!-- media -->
+      <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center">
+        <div style="width:700px;height:575px;background:repeating-linear-gradient(45deg,#181614,#181614 14px,#1c1917 14px,#1c1917 28px);display:flex;align-items:center;justify-content:center">
+          <span style="font:500 12px ui-monospace,Menlo,monospace;color:#57504a;letter-spacing:.08em">CURRENT MEDIA · contain</span>
+        </div>
+      </div>
+      <!-- vignette so hairline UI reads over any media -->
+      <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(11,10,9,.72),transparent 18%,transparent 80%,rgba(11,10,9,.78));pointer-events:none"></div>
+      <!-- bucket bar: text-first hairline row -->
+      <div style="position:absolute;top:0;left:0;right:0;display:flex;justify-content:center;gap:26px;padding:18px 0">
+        <div style="display:flex;align-items:baseline;gap:8px">
+          <span style="display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border:1px solid #4a443e;border-radius:5px;font:600 11px ui-monospace,Menlo,monospace;color:#d8d1c8">A</span>
+          <span style="font:600 12px Manrope;color:#8d857b;font-variant-numeric:tabular-nums">12</span>
+          <div style="width:26px;height:26px;border-radius:4px;background:repeating-linear-gradient(45deg,#2a2622,#2a2622 6px,#302b26 6px,#302b26 12px);align-self:center"></div>
+        </div>
+        <div style="display:flex;align-items:baseline;gap:8px">
+          <span style="display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border:1px solid #4a443e;border-radius:5px;font:600 11px ui-monospace,Menlo,monospace;color:#d8d1c8">B</span>
+          <span style="font:600 12px Manrope;color:#8d857b;font-variant-numeric:tabular-nums">5</span>
+          <div style="width:26px;height:26px;border-radius:4px;background:repeating-linear-gradient(45deg,#2a2622,#2a2622 6px,#302b26 6px,#302b26 12px);align-self:center"></div>
+        </div>
+        <div style="display:flex;align-items:baseline;gap:8px">
+          <span style="display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border:1px solid #4a443e;border-radius:5px;font:600 11px ui-monospace,Menlo,monospace;color:#d8d1c8">C</span>
+          <span style="font:600 12px Manrope;color:#8d857b;font-variant-numeric:tabular-nums">8</span>
+          <div style="width:26px;height:26px;border-radius:4px;background:repeating-linear-gradient(45deg,#2a2622,#2a2622 6px,#302b26 6px,#302b26 12px);align-self:center"></div>
+        </div>
+        <div style="width:1px;background:#33302c;margin:2px 0"></div>
+        <div style="display:flex;align-items:baseline;gap:8px">
+          <span style="display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border:1px solid #ff5c38;border-radius:5px;font:600 11px ui-monospace,Menlo,monospace;color:#ff7d5e">←</span>
+          <span style="font:600 12px Manrope;color:#ff7d5e;font-variant-numeric:tabular-nums">3</span>
+        </div>
+      </div>
+      <!-- progress: thin bar + numerals -->
+      <div style="position:absolute;top:0;left:0;right:0;height:2px;background:#242019">
+        <div style="width:15.4%;height:100%;background:#ff5c38"></div>
+      </div>
+      <div style="position:absolute;top:18px;right:20px;font:600 12px ui-monospace,Menlo,monospace;color:#8d857b;font-variant-numeric:tabular-nums">037 / 240</div>
+      <!-- next up -->
+      <div style="position:absolute;left:20px;bottom:20px;display:flex;align-items:flex-end;gap:8px;opacity:.85">
+        <div style="width:58px;height:78px;border-radius:3px;border:1px solid #33302c;background:repeating-linear-gradient(45deg,#211e1b,#211e1b 7px,#262220 7px,#262220 14px)"></div>
+        <div style="width:70px;height:94px;border-radius:3px;border:1px solid #4a443e;background:repeating-linear-gradient(45deg,#252220,#252220 7px,#2a2724 7px,#2a2724 14px)"></div>
+      </div>
+      <!-- footer -->
+      <div style="position:absolute;left:0;right:0;bottom:18px;display:flex;flex-direction:column;align-items:center;gap:12px">
+        <div style="font:500 11.5px ui-monospace,Menlo,monospace;color:#8d857b;letter-spacing:.04em">IMG_2024.jpg</div>
+        <div style="display:flex;align-items:center;gap:18px">
+          <button style="background:none;border:none;font:600 12.5px Manrope;color:#d8d1c8;cursor:pointer;padding:6px 2px;border-bottom:1px solid transparent" style-hover="border-bottom:1px solid #d8d1c8">◀ Undo</button>
+          <button style="background:none;border:none;font:600 12.5px Manrope;color:#57504a;cursor:pointer;padding:6px 2px">Redo</button>
+          <button style="padding:9px 26px;background:#ff5c38;border:none;border-radius:3px;font:800 12.5px Manrope;color:#0b0a09;letter-spacing:.02em;cursor:pointer">SORT</button>
+          <button style="background:none;border:none;font:600 12.5px Manrope;color:#ff7d5e;cursor:pointer;padding:6px 2px">Start over</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>
+<p class="dv-next">Próbáld: „<a class="dv-oid" href="#1a">1a</a> irány, de a <a class="dv-oid" href="#1b">1b</a> dock-jával” · „dolgozd ki a nyertest mind a 4 képernyőre” · „mutass világos verziót az <a class="dv-oid" href="#1a">1a</a>-ból”</p>
+</section>
+
+</x-dc>
+</body>
+</html>
