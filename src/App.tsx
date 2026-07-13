@@ -7,6 +7,7 @@ import { ProgressBadge } from './components/ProgressBadge'
 import { CardStack } from './components/CardStack'
 import { ControlButtons } from './components/ControlButtons'
 import { ThemeToggle } from './components/ThemeToggle'
+import { VersionBadge } from './components/VersionBadge'
 import styles from './App.module.css'
 
 function SortingView() {
@@ -70,7 +71,15 @@ export default function App() {
   const screen = useSortStore((s) => s.screen)
   useKeyboard()
 
-  if (screen === 'picker') return <FolderPicker />
-  if (screen === 'done') return <ResultScreen />
-  return <SortingView />
+  let view
+  if (screen === 'picker') view = <FolderPicker />
+  else if (screen === 'done') view = <ResultScreen />
+  else view = <SortingView />
+
+  return (
+    <>
+      {view}
+      <VersionBadge />
+    </>
+  )
 }
