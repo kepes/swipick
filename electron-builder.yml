@@ -1,0 +1,23 @@
+appId: com.swipick.app
+productName: Swipick
+directories:
+  output: release
+files:
+  - dist/**/*
+  - electron/**/*
+  - package.json
+publish:
+  provider: github
+  owner: kepes
+  repo: swipick
+mac:
+  target:
+    - target: dmg
+      arch: [universal]
+  artifactName: Swipick-mac.${ext}
+win:
+  target: nsis
+  artifactName: Swipick-win.${ext}
+linux:
+  target: AppImage
+  artifactName: Swipick-linux.${ext}
