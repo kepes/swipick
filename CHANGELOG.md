@@ -14,6 +14,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add UI design brief document for designer handover, describing the current UI screen by screen (`docs/ui-design-brief.md`)
 - Add a light/dark theme toggle
 - Add a source-available PolyForm Noncommercial license; commercial use now requires a separate paid license
+- Deploy to GitHub Pages on `v*` tags, with a faint version badge shown in the top-left corner
+- Show a desktop-download fallback (macOS/Windows/Linux) when opened in an unsupported browser
+- Package the app as an unsigned Electron desktop binary (macOS/Windows/Linux) published to GitHub Releases
+- Add the `prod_deploy` release script (version bump, tag, prod promotion)
 
 ### Changed
 

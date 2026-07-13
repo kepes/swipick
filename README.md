@@ -26,9 +26,12 @@ The whole flow runs in the browser, **with no server and no database**, using th
 5. [Keys](#keys)
 6. [How it sorts (file operations)](#how-it-sorts-file-operations)
 7. [Session saving](#session-saving)
-8. [npm scripts](#npm-scripts)
-9. [Architecture](#architecture)
-10. [License](#license)
+8. [Deployment](#deployment)
+9. [Releasing (`npm run prod_deploy`)](#releasing-npm-run-prod_deploy)
+10. [Desktop app (Electron)](#desktop-app-electron)
+11. [npm scripts](#npm-scripts)
+12. [Architecture](#architecture)
+13. [License](#license)
 
 ## Features
 
@@ -104,6 +107,40 @@ Inside the selected folder, the "Sort" button:
 
 > Note: the folder is identified by its **name** (for security reasons the browser does not provide a stable full path). Two folders with the same name but physically different could share the same session branch; filename matching filters this further.
 
+## Deployment
+
+The app is deployed to GitHub Pages at <https://kepes.github.io/swipick/> and is
+**tag-driven**: pushing a `v*` version tag triggers both the web deploy
+(`.github/workflows/pages.yml`) and the desktop binary build
+(`.github/workflows/release.yml`). Nothing deploys on a casual branch push.
+
+## Releasing (`npm run prod_deploy`)
+
+`prod_deploy` is the only sanctioned way to ship a release. From a clean `dev`
+branch:
+
+    npm run prod_deploy            # interactive: prompts for the new version
+    npm run prod_deploy -- --dry-run   # preview only, changes nothing
+
+It reads the highest `v*` tag, suggests the next patch version (you can override
+it), validates the build, bumps `package.json` + `CHANGELOG.md` + `src/version.ts`,
+commits on `dev`, tags `vX.Y.Z`, fast-forwards `prod`, and pushes. The tag push
+starts the two CI workflows above.
+
+> The download links on the unsupported-browser screen resolve only **after the
+> first desktop release exists** (they point at `releases/latest`).
+
+## Desktop app (Electron)
+
+The same app is packaged as an unsigned desktop binary:
+
+    npm run electron:dev     # build + launch the desktop app locally
+    npm run electron:build   # build a binary for the current OS (into release/)
+
+CI produces `Swipick-mac.dmg`, `Swipick-win.exe`, and `Swipick-linux.AppImage` on
+each `v*` tag and publishes them to GitHub Releases. Binaries are unsigned, so
+macOS Gatekeeper / Windows SmartScreen will warn on first launch.
+
 ## npm scripts
 
 | Script               | What it does                                                                                                                                                                       |
@@ -114,6 +151,9 @@ Inside the selected folder, the "Sort" button:
 | `npm test`           | A single run of the full Vitest test suite.                                                                                                                                        |
 | `npm run test:watch` | Vitest in watch mode.                                                                                                                                                              |
 | `npm run typecheck`  | Type checking only (`tsc --noEmit`).                                                                                                                                               |
+| `npm run prod_deploy` | Interactive release script: bumps the version, updates the changelog, tags `vX.Y.Z`, and promotes `dev` to `prod` (see [Releasing](#releasing-npm-run-prod_deploy)).             |
+| `npm run electron:dev` | Builds the app and launches it as a desktop app locally (Electron).                                                                                                              |
+| `npm run electron:build` | Packages the app into a desktop binary for the current OS, into `release/`.                                                                                                    |
 
 ## Architecture
 
