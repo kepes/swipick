@@ -78,10 +78,14 @@ function bumpPackageJson(version) {
   pkg.version = version
   writeFileSync(p, JSON.stringify(pkg, null, 2) + '\n')
 }
-function updateChangelog(tag) {
+function updateChangelog(version) {
   const p = path.join(ROOT, 'CHANGELOG.md')
   const cl = readFileSync(p, 'utf8')
-  writeFileSync(p, cl.replace(/^## \[Unreleased\]/m, `## [Unreleased]\n\n## [${tag}] - ${todayISO()}`))
+  // Guard: without a '## [Unreleased]' header the replace would silently no-op and
+  // ship a release with no dated CHANGELOG section. Fail loud instead.
+  if (!/^## \[Unreleased\]/m.test(cl)) abort('CHANGELOG.md has no "## [Unreleased]" section to promote.')
+  // Keep a Changelog uses an unprefixed version in the header (## [0.2.0]), not the tag.
+  writeFileSync(p, cl.replace(/^## \[Unreleased\]/m, `## [Unreleased]\n\n## [${version}] - ${todayISO()}`))
 }
 
 async function main() {
@@ -127,7 +131,7 @@ async function main() {
   // Keep package-lock.json's version in sync with package.json, or the release commit
   // ships a desynced lockfile and every CI `npm ci` (pages.yml + release.yml) fails.
   exec('npm install --package-lock-only --no-audit', { silent: true })
-  updateChangelog(tag)
+  updateChangelog(version)
   exec('git add package.json package-lock.json CHANGELOG.md src/version.ts', { silent: true })
   exec(`git commit -m "chore: release ${tag}"`, { silent: true })
   log.ok(`Committed release ${tag}`)
