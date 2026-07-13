@@ -13,7 +13,8 @@
     "test:watch": "vitest",
     "typecheck": "tsc --noEmit",
     "electron:dev": "npm run build && electron .",
-    "electron:build": "npm run build && electron-builder"
+    "electron:build": "npm run build && electron-builder",
+    "prod_deploy": "node scripts/prod-deploy.mjs"
   },
   "dependencies": {
     "framer-motion": "^11.11.17",
