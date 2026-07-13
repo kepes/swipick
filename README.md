@@ -120,5 +120,5 @@ src/
 The detailed design documents:
 
 - **Requirements spec:** [docs/swipick-spec.md](docs/swipick-spec.md)
-- **Design / architecture:** [docs/superpowers/specs/2026-06-17-swipick-design.md](docs/superpowers/specs/2026-06-17-swipick-design.md)
-- **Implementation plan:** [docs/superpowers/plans/2026-06-17-swipick-plan.md](docs/superpowers/plans/2026-06-17-swipick-plan.md)
+- **Design / architecture:** [docs/specs/2026-06-17-swipick-design.md](docs/specs/2026-06-17-swipick-design.md)
+- **Implementation plan:** [docs/plans/2026-06-17-swipick-plan.md](docs/plans/2026-06-17-swipick-plan.md)
