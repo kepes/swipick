@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Establish English as the project's language policy (documented in CLAUDE.md)
 - Add UI design brief document for designer handover, describing the current UI screen by screen (`docs/ui-design-brief.md`)
 - Add a light/dark theme toggle
+- Add a source-available PolyForm Noncommercial license; commercial use now requires a separate paid license
 
 ### Changed
 

@@ -28,6 +28,7 @@ The whole flow runs in the browser, **with no server and no database**, using th
 7. [Session saving](#session-saving)
 8. [npm scripts](#npm-scripts)
 9. [Architecture](#architecture)
+10. [License](#license)
 
 ## Features
 
@@ -135,3 +136,15 @@ The detailed design documents:
 - **Requirements spec:** [docs/swipick-spec.md](docs/swipick-spec.md)
 - **Design / architecture:** [docs/specs/2026-06-17-swipick-design.md](docs/specs/2026-06-17-swipick-design.md)
 - **Implementation plan:** [docs/plans/2026-06-17-swipick-plan.md](docs/plans/2026-06-17-swipick-plan.md)
+
+## License
+
+Source-available under the [PolyForm Noncommercial License 1.0.0](LICENSE).
+
+- **Noncommercial use is free.** You may use, modify, and redistribute the
+  software for any noncommercial purpose, provided you keep the copyright and
+  license notices intact (attribution / source citation).
+- **Commercial use requires a paid license.** To use this software for a
+  commercial purpose, obtain a separate commercial license from the author.
+
+Copyright © 2026 Peter Kepes. Commercial licensing: **kepesp@gmail.com**.
