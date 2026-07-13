@@ -1,4 +1,8 @@
+<p align="center"><picture><source media="(prefers-color-scheme: dark)" srcset="logo-dark.svg"><img src="logo.svg" alt="Swipick" width="228"></picture></p>
+
 # Handoff: Swipick — "Playroom" UI redesign
+
+![Swipick sorting screen](screenshot.png)
 
 ## Overview
 
