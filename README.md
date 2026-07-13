@@ -10,6 +10,12 @@
 </p>
 
 <p align="center">
+  <a href="https://kepes.github.io/swipick/"><strong>▶ Open the live app</strong></a>
+  &nbsp;·&nbsp;
+  <a href="https://kepes.github.io/swipick/">kepes.github.io/swipick</a>
+</p>
+
+<p align="center">
   <img alt="Swipick sorting screen" src="docs/design/screenshot.png" width="820">
 </p>
 
