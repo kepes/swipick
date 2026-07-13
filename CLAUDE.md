@@ -19,7 +19,9 @@
 - **`prod` is a protected branch** (GitHub ruleset: no direct push, no
   force-push, PR required) and `v*` tags are protected. Do not propose or make
   changes that assume direct write access to `prod`.
-- Day-to-day work happens on `dev`; `main` is the integration branch.
+- Day-to-day work happens on `dev`. There is no `main` branch — the only
+  branches are `dev` (integration / working branch) and `prod` (release-only,
+  tag-driven).
 
 ## Documentation layout
 
