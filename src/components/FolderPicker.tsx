@@ -1,5 +1,6 @@
 import { useSortStore } from '../store/useSortStore'
 import { realGateway } from '../fs/gateway'
+import { detectOS, ALL_TARGETS } from '../platform/downloads'
 import styles from './FolderPicker.module.css'
 
 export function FolderPicker() {
@@ -43,8 +44,36 @@ export function FolderPicker() {
           Choose folder
         </button>
       ) : (
-        <div className={styles.warning}>
-          This browser is not supported — use Chrome or Edge.
+        <div className={styles.fallback}>
+          <p className={styles.warning}>
+            This browser is not supported. Swipick needs Chrome or Edge on desktop for
+            secure local file handling.
+          </p>
+          <p className={styles.fallbackHint}>
+            Open this page in Chrome or Edge, or download the desktop app:
+          </p>
+          {(() => {
+            const os = detectOS()
+            const primary = ALL_TARGETS.find((t) => t.os === os)
+            const others = ALL_TARGETS.filter((t) => t !== primary)
+            const primaryLabel = primary?.label.replace(/\s*\(.*\)$/, '') ?? ''
+            return (
+              <>
+                {primary && (
+                  <a className={styles.button} href={primary.url}>
+                    Download for {primaryLabel}
+                  </a>
+                )}
+                <div className={styles.downloads}>
+                  {others.map((t) => (
+                    <a key={t.os} className={styles.downloadLink} href={t.url}>
+                      {t.label}
+                    </a>
+                  ))}
+                </div>
+              </>
+            )
+          })()}
         </div>
       )}
 

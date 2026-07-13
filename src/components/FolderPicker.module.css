@@ -108,3 +108,37 @@
   transform: translateY(3px);
   border-bottom-width: 4px;
 }
+
+/* Unsupported-browser fallback: warning + download options. */
+.fallback {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--s-md);
+  max-width: 520px;
+}
+
+.fallbackHint {
+  margin: 0;
+  color: var(--taupe);
+  font-weight: 500;
+  text-align: center;
+}
+
+.downloads {
+  display: flex;
+  gap: var(--s-md);
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.downloadLink {
+  color: var(--ink);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.downloadLink:hover {
+  color: var(--coral);
+}
