@@ -1,4 +1,17 @@
-# Swipic
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/design/logo-dark.svg">
+    <img alt="Swipick" src="docs/design/logo.svg" width="240">
+  </picture>
+</p>
+
+<p align="center">
+  <strong>Lightning-fast, keyboard-driven organizing of images and videos — right in your browser.</strong>
+</p>
+
+<p align="center">
+  <img alt="Swipick sorting screen" src="docs/design/screenshot.png" width="820">
+</p>
 
 A local, browser-based web app for **lightning-fast, keyboard-driven organizing** of images and videos. You pick a folder, the app deals out the media inside it one at a time Tinder-style, you sort each item into buckets with the keyboard, and at the end a single click organizes them into subfolders with **real file operations**.
 
