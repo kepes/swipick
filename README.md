@@ -17,6 +17,18 @@ A local, browser-based web app for **lightning-fast, keyboard-driven organizing*
 
 The whole flow runs in the browser, **with no server and no database**, using the [File System Access API](https://developer.mozilla.org/en-US/docs/Web/API/File_System_Access_API).
 
+> [!IMPORTANT]
+> **Current limitations**
+>
+> - **Chrome / Edge only.** Swipick depends on the File System Access API, so
+>   browsers without it (Safari, Firefox, most mobile browsers) are **not
+>   supported** — they are shown a desktop-download fallback instead.
+> - **Unsigned desktop binaries.** The downloadable macOS / Windows / Linux
+>   builds are currently **unsigned**, so macOS Gatekeeper and Windows
+>   SmartScreen warn on first launch. Signing and notarization are in progress
+>   (tracked in [#1](https://github.com/kepes/swipick/issues/1) and
+>   [#2](https://github.com/kepes/swipick/issues/2)).
+
 ## Table of contents
 
 1. [Features](#features)
