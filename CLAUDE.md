@@ -8,6 +8,19 @@
   English. Do not introduce Hungarian (or any other non-English) text into the
   codebase.
 
+## Release & branches
+
+- **`prod` is release-only.** Never push directly to `prod`, and never treat it
+  as a working branch. Code reaches `prod` only as a tagged release: a commit
+  that carries a `v*` version tag.
+- **Releases are tag-driven.** Cutting a `v*` tag is what promotes code to
+  production — it drives both the GitHub Pages web deploy and the desktop binary
+  build. No casual pushes trigger a production release.
+- **`prod` is a protected branch** (GitHub ruleset: no direct push, no
+  force-push, PR required) and `v*` tags are protected. Do not propose or make
+  changes that assume direct write access to `prod`.
+- Day-to-day work happens on `dev`; `main` is the integration branch.
+
 ## Documentation layout
 
 - **No `docs/superpowers/` directory.** Specs and plans live directly under
