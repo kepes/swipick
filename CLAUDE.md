@@ -31,3 +31,14 @@
   - Implementation plans → `docs/plans/YYYY-MM-DD-<topic>-plan.md`
 - The Superpowers workflows (brainstorming, writing-plans, etc.) must write
   their output to these locations, not to `docs/superpowers/…`.
+
+<!-- BEGIN: github-issues-themes (managed by github-issues skill) -->
+## GitHub issue theme tags (skill registry)
+
+| Tag | Color | Description |
+|-----|-------|-------------|
+| desktop | #6E7781 | Desktop packaging / Electron / signing / distribution |
+
+Last sync with GitHub: 2026-07-13
+<!-- END: github-issues-themes -->
+
