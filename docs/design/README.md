@@ -103,6 +103,8 @@ Nincs külső asset. Betűtípus: **Sora** (Google Fonts, 400–800). A prototí
 
 ## Files
 
+- `DESIGN.md` — géppel olvasható design system (Google Stitch DESIGN.md szabvány); AI agenteknek elsődleges token-forrás
+- `Design System Preview.dc.html` — a design system vizuális preview-ja (tokenek, komponensek, light/dark toggle)
 - `Swipick Prototype.dc.html` — interaktív prototípus (elsődleges viselkedési referencia)
 - `Swipick Options.dc.html` — statikus képernyőtervek (t2 = végleges irány)
 - `ui-design-brief.md` — eredeti funkcionális brief
